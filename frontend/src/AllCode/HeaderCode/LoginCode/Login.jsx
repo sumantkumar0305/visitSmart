@@ -1,0 +1,74 @@
+import React, { useState } from "react";
+import {
+  Avatar,
+  Box,
+  Typography,
+  Container,
+  Paper
+} from "@mui/material";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+// import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import LoginInput from "../CommonCode/InputText";
+import LoginBtn from "../CommonCode/Button";
+import LoginBottom from "./LoginBottom";
+import LoginPassword from "../CommonCode/InputPassword";
+import EmailIcon from '@mui/icons-material/Email';
+
+export default function Login() {
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  
+  // handle input change
+  const handleChange = (e) => {
+  const { name, value } = e.target;
+  setFormData((prev) => ({
+   ...prev,
+    [name]: value
+  }));
+  };
+
+
+  // handle form submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(formData);
+  };
+
+  return (
+    <Container
+      component="main"
+      maxWidth="xs"
+      sx={{ mt: 8, mb: 4 }}
+    >
+      <Paper elevation={6} sx={{ p: 4, borderRadius: 4 }}>
+        <Box
+          sx={{
+            marginTop: 1,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5" fontWeight="bold">
+            Welcome to VisitSmart
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Please login to continue
+          </Typography>
+
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: "100%" }}>
+            <LoginInput formData={formData} handleChange={handleChange} ID="email" label="Enter Email" name="email" type="email" icon={EmailIcon} />
+            <LoginPassword formData={formData} handleChange={handleChange} name="password" ID="password" label="Enter Password" />
+
+            <LoginBtn text="Login" />
+
+            <LoginBottom href="/signup/form" />
+          </Box>
+        </Box>
+      </Paper>
+    </Container>
+  );
+}
