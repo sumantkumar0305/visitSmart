@@ -3,7 +3,8 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { connect } from "mongoose";
 import userRoutes from './Routes/userRoutes.js';
-import siteRoutes from './Routes/siteRoutes.js'
+import siteRoutes from './Routes/siteRoutes.js';
+import review from "./Routes/reviewRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -32,8 +33,9 @@ app.get('/', (req,res)=>{
 
 app.use('/user/data', userRoutes);
 app.use('/site/data', siteRoutes);
+app.use('/site/review', review);
 
 const port = process.env.PORT;
 app.listen(port, ()=>{
     console.log(`🚀 Server is running on http://localhost:${port}`);
-})
+}) 

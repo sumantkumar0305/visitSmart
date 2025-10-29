@@ -35,11 +35,10 @@ export default function AboutCard({rating}) {
       return prev;
     }
     });
-  }
+  } 
 
   const handleReviewClick =()=>{
-    console.log("Hello i am hearing");
-    navigate("/show/site/review/page")
+    navigate('/show/site/review/page', {state: {ID: aboutSite?._id}});
   }
 
   return (

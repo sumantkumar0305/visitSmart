@@ -1,25 +1,46 @@
 import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
-  Rating,
   Paper,
+  Button,
   Divider,
 } from "@mui/material";
-import StarIcon from "@mui/icons-material/Star";
 import ReviewHelper from "./ReviewHelper"
 import AlertMsg from '../../../AlertMsg';
 import ReviewResult from "./ReviewResult";
-
+import axios from "axios";
+import CircularProgress from "@mui/material/CircularProgress";
+import { useEffect } from "react";
+import ReviewBtn from "./ReviewBtn";
+import ReviewEdit from "./ReviewEdit";
 
 const Review = () => {
+  const location = useLocation();
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [reviews, setReviews] = useState([]); // 🔹 Array to store multiple reviews
+  const [loading, setLoading] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [editReview, setEditReview] = useState(null);
   const [alert, setAlert] = useState({
     type: "",
     message: ""
   });
+  // const [isEdit, setIsEdit] = useState(true);
+
+  const ID = location.state?.ID;
+    
+  const fetchReviews = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/site/review/fetch/${ID}`);
+        const reversedReviews = response.data.slice().reverse();
+        setReviews(reversedReviews);
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      }
+  }
 
   const handleCommentChange =(e)=>{
     setComment(e.target.value);
@@ -29,31 +50,72 @@ const Review = () => {
     setRating(newValue);
   };
 
-  const handleSubmit = () => {
-    if (rating === 0 || comment.trim() === "") {
-      setAlert({
-        type: "error",
-        message: "Either Rating or Comment is missing"
-      });
-      return;
+  const handleDelete =async(reviewid)=> {
+    try{
+      const response = await axios.post(`http://localhost:8080/site/review/delete/${reviewid}`);
+      const { type, message } = response.data;
+      setAlert({ type, message });
+      fetchReviews();
+    }catch(err){
+    setAlert({
+      type: "error",
+      message: err.message || "Something went wrong while deleting review.",
+    });
     }
+  };
 
-    // Add new review to the list
-    const newReview = {
-      id: Date.now(),
-      rating,
-      comment,
-    };
+  const handleEdit = async(reviewData)=>{
+    console.log(reviewData);
+    setIsEdit(true);
+    setEditReview(reviewData);
+  }
 
-    setReviews((prev) => [newReview, ...prev]); // newest first
+  const handleSubmit = async () => {
+  if (rating === 0 || comment.trim() === "") {
+    setAlert({
+      type: "error",
+      message: "Either Rating or Comment is missing",
+    });
+    return;
+  }
+
+  setLoading(true);
+
+  const newReview = { rating, comment };
+
+  try {
+    console.log(ID);
+    const response = await axios.post(`http://localhost:8080/site/review/save/${ID}`, newReview);
+    const { type, message } = response.data;
+    setAlert({ type, message });
+    // Reset form
     setRating(0);
     setComment("");
-  };
+    fetchReviews();
+    setLoading(false);
+  } catch (error) {
+    console.error("Review submission failed:", error);
+
+    setAlert({
+      type: "error",
+      message: error.message || "An error occurred while submitting your review.",
+    });
+  }finally{
+    setLoading(false);
+  }
+};
+
+useEffect(() => {
+  fetchReviews();
+}, [ID]);
 
   return (
     <>
     {alert.type && alert.message && <AlertMsg alert={alert} />}
     <Box sx={{ px: 2, py: { xs: 3, sm: 4 }, maxWidth: 700, mx: "auto" }}>
+    {isEdit ? (
+      <ReviewEdit editReview={editReview} setIsEdit={setIsEdit} fetchReviews={fetchReviews} />
+    ):(
       <Paper
         elevation={6}
         sx={{
@@ -77,35 +139,25 @@ const Review = () => {
         </Typography>
         <Divider sx={{ mb: 3 }} />
 
-        <ReviewHelper handleSubmit={handleSubmit} handleRatingChange={handleRatingChange} handleCommentChange={handleCommentChange} comment={comment} rating={rating} />
-      </Paper>
+        <ReviewHelper 
+        handleRatingChange={handleRatingChange} 
+        handleCommentChange={handleCommentChange} 
+        comment={comment} 
+        rating={rating} 
+        />
+
+        {loading ? (
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+            <CircularProgress size={28} color="#f5ce42" />
+          </Box>
+        ):(
+        <ReviewBtn handleSubmit={handleSubmit} />
+        )}
+      </Paper>        
+      )}
 
       {/* 🧩 Result Box Section */}
-      {reviews.length > 0 && (
-        <Paper
-          elevation={4}
-          sx={{
-            mt: 4,
-            p: { xs: 2.5, sm: 3 },
-            borderRadius: 3,
-            backgroundColor: "#fff",
-            boxShadow: "0 3px 12px rgba(0,0,0,0.08)",
-            transition: "all 0.3s ease",
-          }}
-        >
-          <Typography
-            variant="h5"
-            fontWeight="bold"
-            sx={{ color: "#333", mb: 2 }}
-          >
-            📝 Submitted Reviews
-          </Typography>
-
-          <Divider sx={{ mb: 2 }} />
-
-          <ReviewResult reviews={reviews} />
-        </Paper>
-      )}
+          <ReviewResult reviews={reviews} handleDelete={handleDelete} handleEdit={handleEdit} />
     </Box>
     </>
   );

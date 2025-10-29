@@ -1,12 +1,36 @@
-import { Box, Typography, Rating } from "@mui/material";
+import { Box, Typography, Rating, Paper, Divider, Tooltip } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
-export default function ReviewResult({reviews}){
+export default function ReviewResult({reviews, handleDelete, handleEdit}){
     return(
         <>
+        {reviews.length > 0 && (
+          <Paper
+          elevation={4} 
+            sx={{
+            mt: 4,
+            p: { xs: 2.5, sm: 3 },
+            borderRadius: 3,
+            backgroundColor: "#fff",
+            boxShadow: "0 3px 12px rgba(0,0,0,0.08)",
+            transition: "all 0.3s ease",
+          }}
+        >
+          <Typography 
+              variant="h5"
+            fontWeight="bold"
+            sx={{ color: "#333", mb: 2 }}
+          >
+            📝 Submitted Reviews
+          </Typography>
+
+          <Divider sx={{ mb: 2 }} />
+
         {reviews.map((review, index) => (
             <Box
-              key={review.id}
+              key={review.id} 
               sx={{
                 mb: 3,
                 p: 2,
@@ -41,8 +65,8 @@ export default function ReviewResult({reviews}){
                 </Box>
               </Box>
 
-
-              <Typography
+             <Box display="flex" justifyContent="space-between" pr={3} mt={3}>
+               <Typography
                 variant="body1"
                 sx={{
                   mt: 1.5,
@@ -53,8 +77,30 @@ export default function ReviewResult({reviews}){
               >
                 {review.comment}
               </Typography>
+                
+                <Box display="flex" gap={4}>
+                  <Tooltip title="Delete">
+                  <DeleteIcon  onClick={() => handleDelete(review._id)}  sx={{
+                    "&:hover": {
+                      cursor: "pointer"
+                    }
+                  }} />
+                  </Tooltip>
+                  <Tooltip title="Edit">
+                  <EditIcon  onClick={() => handleEdit(review)} sx={{
+                    "&:hover":{
+                      cursor: "pointer"
+                      
+                    }
+                  }}
+                  />
+                  </Tooltip>
+                </Box>
+             </Box>
             </Box>
           ))}
+          </Paper>
+          )} 
         </>
     );
 }

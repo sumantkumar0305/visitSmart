@@ -17,6 +17,7 @@ export default function HelperCard({ data }) {
       const response = await axios.get(`http://localhost:8080/site/data/find/by/${ID}`);
 
       const aboutSiteDate = response.data;
+      console.log(aboutSiteDate);
 
       setTimeout(()=>{
         navigate('/about/card/in/details', {state: {aboutSite: aboutSiteDate}});
@@ -32,7 +33,7 @@ export default function HelperCard({ data }) {
         minWidth: 400,
         maxWidth: 420,
         borderRadius: 3,
-        boxShadow: 4,
+        boxShadow: 4, 
         overflow: 'hidden',
         transition: 'transform 0.3s ease',
         '&:hover': {
