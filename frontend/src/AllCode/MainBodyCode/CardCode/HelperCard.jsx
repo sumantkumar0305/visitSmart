@@ -7,17 +7,41 @@ import axios from 'axios';
 
 export default function HelperCard({ data }) {
   const navigate = useNavigate();
-  const [rating, setRating] = useState(4.5); // Example rating
+  const [rating, setRating] = useState(0); // Example rating
   const [loading, setLoading] = useState(false);
+  
+  const ID = data._id
 
   const handleClick=async()=>{
     setLoading(true)
     try{
-      const ID = data._id
       const response = await axios.get(`http://localhost:8080/site/data/find/by/${ID}`);
 
       const aboutSiteDate = response.data;
-      console.log(aboutSiteDate);
+      // const reviewIds = response.data.review || [];
+
+      // let sum = 0;
+      // for(let id of reviewIds){
+      //   const reviewRes = await axios.get(`http://localhost:8080/find/singal/review/${id._id}`);
+      //   sum += reviewRes.data.rating
+      // }
+      // console.log(sum);
+
+      // const reviewPromises = reviewIds.map(async (id) => {
+      //   const reviewRes = await axios.get(`http://localhost:8080/site/review/fetch/${id}`);
+      //   return reviewRes.data.rating; // only return rating
+      // });
+      // const ratingsData = await Promise.all(reviewPromises);
+
+      // const avg =
+      //   reversed.length > 0
+      //     ? reversed.reduce((a, b) => a + b, 0) / reversed.length
+      //     : 0;
+      // setRating(avg);
+
+      // const avg = reviewIds.length > 0 ? Math.ceil((sum / reviewIds.length) * 10) / 10 : 0;
+
+      // setRating(avg);
 
       setTimeout(()=>{
         navigate('/about/card/in/details', {state: {aboutSite: aboutSiteDate}});
@@ -69,7 +93,7 @@ export default function HelperCard({ data }) {
         >
           {data.title}
         </Typography>
-        <Box
+        {/* <Box
           sx={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -87,7 +111,7 @@ export default function HelperCard({ data }) {
         >
           {rating}
           <StarBorderIcon sx={{ fontSize: 26 }} />
-        </Box>
+        </Box> */}
       </CardContent>
 
       <CardContent

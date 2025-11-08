@@ -1,5 +1,6 @@
 import mongoose, { Schema, model } from "mongoose"; 
 import review from "./review.js";
+import User from "./User.js";
 
 const siteSchema = new Schema(
   {
@@ -54,6 +55,11 @@ const siteSchema = new Schema(
         ref: "review",
     },
   ],
+  siteAdmin: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User"
+  },
+  
   },
   {
     timestamps: true,

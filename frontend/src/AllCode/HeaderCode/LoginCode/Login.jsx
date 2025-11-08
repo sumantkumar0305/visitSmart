@@ -6,17 +6,26 @@ import {
   Container,
   Paper
 } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-// import axios from "axios";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import LoginInput from "../CommonCode/InputText";
 import LoginBtn from "../CommonCode/Button";
 import LoginBottom from "./LoginBottom";
 import LoginPassword from "../CommonCode/InputPassword";
 import EmailIcon from '@mui/icons-material/Email';
+import AlertMsg from "../../AlertMsg";
+import { fetchUserProfile } from "../../MainBodyCode/middleware";
 
 export default function Login() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
+  const [alert, setAlert] = useState({
+      type: "",
+      message: ""
+    });
   
   // handle input change
   const handleChange = (e) => {
@@ -27,14 +36,41 @@ export default function Login() {
   }));
   };
 
-
   // handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    setLoading(true);
+    try{
+      const response = await axios.post("http://localhost:8080/user/login", formData, { withCredentials: true });
+
+      const { type, message } = response.data;
+
+      setAlert({
+        type: type,
+        message: message
+      });
+      
+      setFormData({
+        email: "",
+        password: ""
+      });
+
+      setTimeout(()=>{
+        navigate("/", { state: { alert: { type, message } } });
+      }, 1500);
+    }catch(err){
+        console.log(err);
+        setAlert({
+          type: "error",
+          message:  err.response?.data?.message || "An error has occurred"
+        });
+        setLoading(false);
+    }
   };
 
-  return (
+  return ( 
+    <>
+    {alert.type === "error" && <AlertMsg alert={alert} />}
     <Container
       component="main"
       maxWidth="xs"
@@ -63,12 +99,20 @@ export default function Login() {
             <LoginInput formData={formData} handleChange={handleChange} ID="email" label="Enter Email" name="email" type="email" icon={EmailIcon} />
             <LoginPassword formData={formData} handleChange={handleChange} name="password" ID="password" label="Enter Password" />
 
-            <LoginBtn text="Login" />
+            {/* <LoginBtn text="Login" /> */}
+            {loading ? (
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+                <CircularProgress size={28} color="primary" />
+              </Box>
+            ) : (
+              <LoginBtn text="Login" />
+            )}
 
             <LoginBottom href="/signup/form" />
           </Box>
         </Box>
       </Paper>
     </Container>
+    </>
   );
 }

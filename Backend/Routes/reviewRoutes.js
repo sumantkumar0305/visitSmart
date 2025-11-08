@@ -3,7 +3,7 @@ import { deleteReview, editReview, fetchReview, saveReview } from "../Controller
 
 const router = express.Router();
 
-router.post('/save/:id', saveReview);
+router.post('/save/:ID/:authorId', saveReview);
 router.get('/fetch/:id', fetchReview);
 router.post('/delete/:reviewId', deleteReview);
 router.put('/edit/:reviewId', editReview)

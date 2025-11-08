@@ -1,14 +1,39 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigationType } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Box, IconButton, Drawer, List} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ButtonCode from './ButtonCode';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
+import { fetchUserProfile } from '../MainBodyCode/middleware';
 // import SearchBar from '../MainBodyCode/MainPageCode';
 
 const Header = () => {
+  // const location = useLocation();
   const navigate = useNavigate()
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
+  const [alert, setAlert] = useState({
+    type: "",
+    message: ""
+  });
+
+  const checkUserProfile = async () => {
+    const loggedIn = await fetchUserProfile();
+    console.log(loggedIn);
+    if(loggedIn === null){
+      setIsLogin(false);
+    }else{
+      setIsLogin(loggedIn.isAuthenticated);
+    }
+  };
+
+  const location = useLocation();
+  useEffect(()=>{
+  checkUserProfile();
+  }, [location.pathname]);
 
   const toggleDrawer = (open) => () => {
     setDrawerOpen(open);
@@ -22,12 +47,28 @@ const Header = () => {
     navigate('/signup/form');
   }
 
-  const handleAboutClick =()=>{
-    navigate('/show/about/page');
-  }
+  const handleAboutClick =async(e)=>{
+    navigate('/');
+  }  
 
   const handleHomeClick =()=>{
     navigate('/');
+  }
+
+  const handleLogoutClick =async()=>{
+    try{
+      const response = await axios.post("http://localhost:8080/user/logout", {}, { withCredentials: true });
+      const { type, message } = response.data;
+
+      checkUserProfile();    
+      setAlert({
+        type: type,
+        message: message
+      });     
+      navigate("/", { state: { alert: { type, message } } });
+    }catch(err){
+      console.log(err);
+    }
   }
 
   return (
@@ -63,16 +104,22 @@ const Header = () => {
               flexGrow: 1,
             }}
           >
-            Janshayak
+            Visits Mart
           </Typography>
 
           {/* Desktop Buttons */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
             <ButtonCode label="Home" handleOnClick={handleHomeClick} />
             <ButtonCode label="About" handleOnClick={handleAboutClick} />
-            {/* <ButtonCode label="Filter" handleOnClick={} /> */}
-            <ButtonCode label="Login" handleOnClick={handleLoginClick} />
-            <ButtonCode label="Sign up" handleOnClick={handleSignupClick} />
+            {!isLogin ? (
+              <>
+                <ButtonCode label="Login" handleOnClick={handleLoginClick} />
+                <ButtonCode label="Sign up" handleOnClick={handleSignupClick} />
+              </>
+            ) : (
+              <ButtonCode label="Logout" handleOnClick={handleLogoutClick} />
+            )}
+
           </Box>
 
           {/* Mobile Menu Icon */}
@@ -93,20 +140,29 @@ const Header = () => {
         <Box sx={{ width: 150 }} onClick={toggleDrawer(false)}>
           <List>
             <Box sx={{mb: 3}}>
-              <ButtonCode label="Home"/>
+              <ButtonCode label="Home" handleOnClick={handleHomeClick} />
             </Box>
 
             <Box sx={{mb: 3}}>
-              <ButtonCode label="About"/>
+              <ButtonCode label="About" handleOnClick={handleAboutClick} />
             </Box>
 
-            <Box sx={{mb: 3}}>
-              <ButtonCode label="Login"/>
-            </Box>
+            {!isLogin ? (
+              <>
+                <Box sx={{mb: 3}}>
+                  <ButtonCode label="Login" handleOnClick={handleLoginClick} />
+                </Box>
+                <Box sx={{mb: 3}}>
+                  <ButtonCode label="Sign up" handleOnClick={handleSignupClick} />
+                </Box>
+              </>
+            ) : (
+              <Box sx={{mb: 3}}>
+                <ButtonCode label="Log out" handleOnClick={handleLogoutClick} />
+              </Box>
+            )}
 
-            <Box sx={{mb: 3}}>
-              <ButtonCode label="Sign up"/>
-            </Box>
+      
           </List>
         </Box>
       </Drawer>
@@ -115,3 +171,10 @@ const Header = () => {
 };
 
 export default Header;
+
+
+
+  // const location = useLocation();
+  // useEffect(()=>{
+  // checkUserProfile();
+  // }, [location.pathname]);

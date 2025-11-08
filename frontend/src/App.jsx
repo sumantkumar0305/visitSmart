@@ -9,6 +9,9 @@ import ReviewEdit from "./AllCode/MainBodyCode/AboutCardCode/ReviewCode/ReviewEd
 import {Routes, Route} from "react-router-dom";
 
 function App() {
+  const checkUserProfile = async () => {
+      const loggedIn = await fetchUserProfile();
+    };
   return (
     <>
       <Header />
@@ -16,7 +19,7 @@ function App() {
         <Route path="/" element={<MainPageCode/>} />
         <Route path="/login/form" element={<Login/>} />
         <Route path="/signup/form" element={<Signup/>} />
-        <Route path="/about/card/in/details" element={<AboutCard rating={0}/>} />
+        <Route path="/about/card/in/details" element={<AboutCard />} />
         <Route path="/show/site/review/page" element={<Review/>} />
         <Route path="/hello" element={<ReviewEdit/>} />
       </Routes>

@@ -1,15 +1,59 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 import { Box, Typography, Paper } from "@mui/material";
 import ArrowIcon from "./ArrowIcon";
 import Location from "./Location";
 import AboutSite from "./AboutSite";
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 
-export default function AboutCard({rating}) {
+export default function AboutCard() {
+  const [rating, setRating] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
-  const aboutSite = location.state?.aboutSite;
+  const aboutSite = location.state?.aboutSite;  
+  const [siteData, setSiteData] = useState(aboutSite); // store live site data
+  
+  const fetchSiteData = async (id) => {
+    try {
+      const res = await axios.get(`http://localhost:8080/site/data/find/by/${id}`);
+      setSiteData(res.data); // refresh with latest site data
+    } catch (err) {
+      console.error("Error fetching site data:", err);
+    }
+  };
+
+  const fetchRating = async (reviews) => {
+    if (!reviews || reviews.length === 0) {
+      setRating(0);
+      return;
+    }
+
+    let sum = 0;
+    for (let review of reviews) {
+      const reviewRes = await axios.get(`http://localhost:8080/find/singal/review/${review._id}`);
+      sum += reviewRes.data.rating;
+    }
+
+    const avg = Math.ceil((sum / reviews.length) * 10) / 10;
+    setRating(avg);
+  };
+
+  useEffect(() => {
+    // Always get latest site data
+    if (aboutSite?._id) {
+      fetchSiteData(aboutSite._id);
+    }
+  }, [aboutSite]);
+
+  useEffect(() => {
+    // Run whenever siteData changes
+    if (siteData?.review) {
+      fetchRating(siteData.review);
+    }
+  }, [siteData]);
+
+
 
   // 🖼️ State for image slider
   const image = [aboutSite?.image, aboutSite?.image2, aboutSite?.image3, aboutSite?.image4]// support single or multiple

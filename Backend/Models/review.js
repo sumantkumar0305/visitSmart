@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import user from './User.js';
 
 const reviewSchema = new mongoose.Schema(
     {
@@ -12,6 +13,10 @@ const reviewSchema = new mongoose.Schema(
             type: String, 
             required: true,
             maxlength: 1000 
+        },
+        author: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "user"
         },
     },
     {

@@ -15,6 +15,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useEffect } from "react";
 import ReviewBtn from "./ReviewBtn";
 import ReviewEdit from "./ReviewEdit";
+import { fetchReviews, fetchUserProfile } from "../../middleware";
+// import { fetchUserProfile } from "../../middleware";
 
 const Review = () => {
   const location = useLocation();
@@ -25,22 +27,20 @@ const Review = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [editReview, setEditReview] = useState(null);
   const [alert, setAlert] = useState({
-    type: "",
+    type: "",  
     message: ""
   });
   // const [isEdit, setIsEdit] = useState(true);
 
   const ID = location.state?.ID;
-    
-  const fetchReviews = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8080/site/review/fetch/${ID}`);
-        const reversedReviews = response.data.slice().reverse();
-        setReviews(reversedReviews);
-      } catch (error) {
-        console.error("Error fetching reviews:", error);
-      }
-  }
+  const loadReviews = async () => {
+    try {
+      const data = await fetchReviews(ID);
+      setReviews(data);
+    } catch (err) {
+      console.error("Error loading reviews:", err);
+    }
+  };
 
   const handleCommentChange =(e)=>{
     setComment(e.target.value);
@@ -52,10 +52,11 @@ const Review = () => {
 
   const handleDelete =async(reviewid)=> {
     try{
+      
       const response = await axios.post(`http://localhost:8080/site/review/delete/${reviewid}`);
       const { type, message } = response.data;
       setAlert({ type, message });
-      fetchReviews();
+      loadReviews();
     }catch(err){
     setAlert({
       type: "error",
@@ -65,7 +66,6 @@ const Review = () => {
   };
 
   const handleEdit = async(reviewData)=>{
-    console.log(reviewData);
     setIsEdit(true);
     setEditReview(reviewData);
   }
@@ -84,14 +84,16 @@ const Review = () => {
   const newReview = { rating, comment };
 
   try {
-    console.log(ID);
-    const response = await axios.post(`http://localhost:8080/site/review/save/${ID}`, newReview);
+    const loggedIn = await fetchUserProfile();
+    console.log(loggedIn.user._id);
+    const authorId = loggedIn.user._id;
+    const response = await axios.post(`http://localhost:8080/site/review/save/${ID}/${authorId}`, newReview);
     const { type, message } = response.data;
     setAlert({ type, message });
     // Reset form
     setRating(0);
     setComment("");
-    fetchReviews();
+    loadReviews();
     setLoading(false);
   } catch (error) {
     console.error("Review submission failed:", error);
@@ -106,7 +108,7 @@ const Review = () => {
 };
 
 useEffect(() => {
-  fetchReviews();
+  loadReviews();
 }, [ID]);
 
   return (
@@ -114,7 +116,7 @@ useEffect(() => {
     {alert.type && alert.message && <AlertMsg alert={alert} />}
     <Box sx={{ px: 2, py: { xs: 3, sm: 4 }, maxWidth: 700, mx: "auto" }}>
     {isEdit ? (
-      <ReviewEdit editReview={editReview} setIsEdit={setIsEdit} fetchReviews={fetchReviews} />
+      <ReviewEdit editReview={editReview} setIsEdit={setIsEdit} fetchReviews={loadReviews} />
     ):(
       <Paper
         elevation={6}

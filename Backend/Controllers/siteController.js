@@ -7,21 +7,25 @@ export const findSiteData = async(req,res)=>{
         return res.json(data);
     }catch(err){
         console.log(err);
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: err.message || "Palce data are not find" });
     }
 }
 
 export const findSingalData = async(req, res)=>{
     try{
         let ID = req.params.id;
-        // if (!mongoose.Types.ObjectId.isValid(id)) {
-        //     // return next(new expressError(400, 'Invalid Listing ID'));
-        //     return res.status(500).json({ message: "Invalid site ID", type: "error" });
-        // }
-        let singalData = await siteSchema.findById(ID);
+        if (!mongoose.Types.ObjectId.isValid(ID)) {
+            return res.status(500).json({ message: "Invalid site ID", type: "error" });
+        }
+        let singalData = await siteSchema.findById(ID).populate("review");
         return res.json(singalData);
     }catch(err){
         console.log(err);
-        return res.status(500).json({ message: err.message });
+        return res.status(500).json({ message: err.message ||"This palace data are not find" });
     }
 }
+
+// if (!mongoose.Types.ObjectId.isValid(id)) {
+//     // return next(new expressError(400, 'Invalid Listing ID'));
+//     return res.status(500).json({ message: "Invalid site ID", type: "error" });
+// }

@@ -1,8 +1,12 @@
 import express from "express";
-import { saveUserData } from '../Controllers/userController.js'
+import passport from "passport";
+import { isLoginCheck, saveUserData, userLogin, userLogout} from '../Controllers/userController.js'
  
 const router = express.Router();
 
-router.post('/save', saveUserData);
+router.post('/signup', saveUserData);
+router.post("/login", userLogin);
+router.post("/logout", userLogout);
+router.get("/profile", isLoginCheck);
 
-export default router;
+export default router;  

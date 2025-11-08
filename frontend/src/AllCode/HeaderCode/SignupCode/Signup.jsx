@@ -19,9 +19,11 @@ import SignupPassword from "../CommonCode/InputPassword";
 import SignupBtn from "../CommonCode/Button";
 import SignupBottom from "./SignupBottom";
 import AlertMsg from "../../AlertMsg";
+import { fetchUserProfile } from "../../MainBodyCode/middleware";
 
 export default function Signup() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -32,10 +34,6 @@ export default function Signup() {
     type: "",
     message: ""
   });
-
-  const [loading, setLoading] = useState(false); // 👈 buffer state
-
-  
 
   // handle input change
   const handleChange = (e) => {
@@ -49,10 +47,9 @@ export default function Signup() {
   // handle submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData)
     setLoading(true);
-    try{
-        const response = await axios.post("http://localhost:8080/user/data/save", formData);
+      try{
+        const response = await axios.post("http://localhost:8080/user/signup", formData, { withCredentials: true });
 
         const { type, message } = response.data;
 
@@ -67,15 +64,15 @@ export default function Signup() {
           phone: "",
           password: ""
         });
-
+        
         setTimeout(()=>{
           navigate("/", { state: { alert: { type, message } } });
         }, 1500);
     }catch(err){
         console.log(err);
         setAlert({
-          type: "error",
-          message: "An error is occured"
+          type: err.response?.data?.type || "error",
+          message: err.response?.data?.message || "you are not signup(Some error is occure)"
         });
         setLoading(false);
     }
