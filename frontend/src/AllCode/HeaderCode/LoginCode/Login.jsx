@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Avatar,
   Box,
@@ -9,7 +10,6 @@ import {
 import CircularProgress from "@mui/material/CircularProgress";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import LoginInput from "../CommonCode/InputText";
 import LoginBtn from "../CommonCode/Button";
 import LoginBottom from "./LoginBottom";
@@ -26,7 +26,8 @@ export default function Login() {
       type: "",
       message: ""
     });
-  
+    
+
   // handle input change
   const handleChange = (e) => {
   const { name, value } = e.target;
@@ -54,9 +55,11 @@ export default function Login() {
         email: "",
         password: ""
       });
+      const path = sessionStorage.getItem("Path") || "/";
+      sessionStorage.removeItem("Path");
 
       setTimeout(()=>{
-        navigate("/", { state: { alert: { type, message } } });
+        navigate(path, { state: { alert: { type, message } } });
       }, 1500);
     }catch(err){
         console.log(err);

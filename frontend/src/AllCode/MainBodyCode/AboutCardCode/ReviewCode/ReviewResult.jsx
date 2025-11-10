@@ -4,6 +4,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
 export default function ReviewResult({reviews, handleDelete, handleEdit}){
+    const userId = sessionStorage.getItem("userId");
     return(
         <>
         {reviews.length > 0 && (
@@ -78,6 +79,7 @@ export default function ReviewResult({reviews, handleDelete, handleEdit}){
                 {review.comment}
               </Typography>
                 
+                {userId && (userId === review.author) && (
                 <Box display="flex" gap={4}>
                   <Tooltip title="Delete">
                   <DeleteIcon  onClick={() => handleDelete(review._id)}  sx={{
@@ -96,6 +98,7 @@ export default function ReviewResult({reviews, handleDelete, handleEdit}){
                   />
                   </Tooltip>
                 </Box>
+                )}
              </Box>
             </Box>
           ))}

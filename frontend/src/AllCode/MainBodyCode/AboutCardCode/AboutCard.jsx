@@ -1,23 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Box, Typography, Paper } from "@mui/material";
-import ArrowIcon from "./ArrowIcon";
+import { Box, Paper, Typography, Grid,} from "@mui/material";
 import Location from "./Location";
 import AboutSite from "./AboutSite";
-import StarBorderIcon from '@mui/icons-material/StarBorder';
+import SiteHeader from "./AboutCard/SiteHeader";
+import ImageSlider from "./AboutCard/ImageSlider";
+import AddHotelBtn from "./AboutCard/AddHotelBtn";
+import HotelCard from "./HotelCode/HotelCard";
+import AlertMsg from "../../AlertMsg";
 
 export default function AboutCard() {
   const [rating, setRating] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
+  const [alert, setAlert] = useState();
   const aboutSite = location.state?.aboutSite;  
   const [siteData, setSiteData] = useState(aboutSite); // store live site data
+  const [hotelData, setHotelData] = useState([]);
   
   const fetchSiteData = async (id) => {
     try {
       const res = await axios.get(`http://localhost:8080/site/data/find/by/${id}`);
-      setSiteData(res.data); // refresh with latest site data
+      setSiteData(res.data);
     } catch (err) {
       console.error("Error fetching site data:", err);
     }
@@ -29,63 +34,75 @@ export default function AboutCard() {
       return;
     }
 
-    let sum = 0;
-    for (let review of reviews) {
-      const reviewRes = await axios.get(`http://localhost:8080/find/singal/review/${review._id}`);
-      sum += reviewRes.data.rating;
-    }
+    try {
+      const responses = await Promise.all(
+        reviews.map((r) => axios.get(`http://localhost:8080/find/singal/review/${r._id}`))
+      );
 
-    const avg = Math.ceil((sum / reviews.length) * 10) / 10;
-    setRating(avg);
+      const ratings = responses.map((res) => res.data.rating);
+      const avg = Math.ceil((ratings.reduce((a, b) => a + b, 0) / ratings.length) * 10) / 10;
+
+      setRating(avg);
+    } catch (err) {
+      console.error("Error fetching ratings:", err);
+      setRating(0);
+    }
   };
 
+  const fetchHostel = async (hotels)=>{
+    if(!hotels || hotels.length === 0){
+      return;
+    }
+
+    try{
+      const responses = await Promise.all(
+        hotels.map((h)=> axios.get(`http://localhost:8080/hotel/find/singal/data/${h._id}`))
+      );
+
+      setHotelData(responses);
+    }catch(err){
+      console.error("Error fetching hotels:", err);
+    }
+  }
+
   useEffect(() => {
-    // Always get latest site data
-    if (aboutSite?._id) {
+    if(aboutSite?._id){
       fetchSiteData(aboutSite._id);
     }
   }, [aboutSite]);
+
+  useEffect(() => {
+    const alertFromStorage = sessionStorage.getItem("hotelAlert");
+    if (alertFromStorage) {
+      setAlert(JSON.parse(alertFromStorage));
+      sessionStorage.removeItem("hotelAlert"); // clear after use
+    }
+  }, []);
 
   useEffect(() => {
     // Run whenever siteData changes
     if (siteData?.review) {
       fetchRating(siteData.review);
     }
+    if(siteData?.hotel){
+      fetchHostel(siteData.hotel);
+    }
   }, [siteData]);
-
-
 
   // 🖼️ State for image slider
   const image = [aboutSite?.image, aboutSite?.image2, aboutSite?.image3, aboutSite?.image4]// support single or multiple
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const handleRightClick =()=>{
-    setCurrentIndex((prev) => {
-    if (prev < 3) {
-      return prev + 1;
-    } else {
-      window.alert("You've reached the last image!");
-      return prev;
-    }
-    });
+  
+  const handleReviewClick =()=>{
+    navigate('/show/site/review/page', {state: {ID: aboutSite._id}});
   }
 
-  const handleLeftClick =()=>{
-    setCurrentIndex((prev) => {
-    if (prev > 0) {
-      return prev -1;
-    } else {
-      window.alert("You've reached the First image!");
-      return prev;
-    }
-    });
-  } 
-
-  const handleReviewClick =()=>{
-    navigate('/show/site/review/page', {state: {ID: aboutSite?._id}});
+  const addNewHotel =()=>{
+    navigate('/add/hotel/form', {state: {ID: aboutSite._id}});
   }
 
   return (
+    <>
+    {alert && <AlertMsg alert={alert} />}
     <Paper
       elevation={4}
       sx={{
@@ -98,52 +115,7 @@ export default function AboutCard() {
       }}
     >
       {/* Header Section */}
-      <Box
-        display="flex"
-        flexDirection={{ xs: "column", sm: "row" }}
-        alignItems={{ xs: "flex-start", sm: "center" }}
-        justifyContent="space-between"
-        gap={2}
-      >
-        <Typography
-          variant="h4"
-          fontWeight="bold"
-          gutterBottom
-          sx={{
-            ml: { xs: 0, sm: 5 },
-            fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.5rem" },
-          }}
-        >
-          {aboutSite?.title}
-        </Typography>
-
-        <Box
-          onClick={handleReviewClick}
-          sx={{
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            px: { xs: 2, sm: 3 },
-            py: { xs: 0.5, sm: 0.75 },
-            bgcolor: "#ff9800",
-            color: "white",
-            fontSize: { xs: 20, sm: 24 },
-            fontWeight: "bold",
-            borderRadius: "30px",
-            boxShadow: 2,
-            gap: 0.5,
-            alignSelf: { xs: "flex-start", sm: "center" },
-            transition: "transform 0.2s ease-in-out",
-            "&:hover": {
-              cursor: "pointer",
-              transform: "scale(1.05)",
-            },
-          }}
-        >
-          {rating}
-          <StarBorderIcon sx={{ fontSize: { xs: 22, sm: 26 } }} />
-        </Box>
-      </Box>
+      <SiteHeader title={aboutSite?.title} rating={rating} handleReviewClick={handleReviewClick} />
 
       {/* Content Section */}
       <Box
@@ -154,37 +126,7 @@ export default function AboutCard() {
         p={{ xs: 1, sm: 2, md: 3 }}
       >
         {/* 🖼️ Image with slider controls */}
-        <Box
-          sx={{
-            position: "relative",
-            width: { xs: "100%", md: "60%" },
-            height: { xs: "18rem", sm: "22rem", md: "28rem", lg: "32rem" },
-            borderRadius: 2,
-            boxShadow: 3,
-            overflow: "hidden",
-          }}
-        >
-          <Box
-            component="img"
-            src={image[currentIndex]}
-            alt={aboutSite?.title}
-            sx={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              borderRadius: 2,
-              transition: "all 0.5s ease-in-out",
-            }}
-          />
-
-          {/* Arrows only if multiple images */}
-          {image.length > 1 && (
-            <ArrowIcon
-              handleLeftClick={handleLeftClick}
-              handleRightClick={handleRightClick}
-            />
-          )}
-        </Box>
+        <ImageSlider image={image} title={aboutSite?.title} />
 
         {/* 📝 About & Location Section */}
         <Box
@@ -198,6 +140,17 @@ export default function AboutCard() {
           <Location aboutSite={aboutSite} />
         </Box>
       </Box>
+      <hr />
+
+      {/* Hotel near for this */}
+      <Box mt={4}>
+        <HotelCard hotelData={hotelData} />
+          {/* ➕ Add New Hotel Button */}
+          <Box mt={4}>
+            <AddHotelBtn addNewHotel={addNewHotel} />
+          </Box>
+        </Box>
     </Paper>
+    </>
     );
 }

@@ -1,5 +1,6 @@
 import mongoose, { Schema, model } from "mongoose"; 
 import review from "./review.js";
+import hotel from "./hotel.js";
 import User from "./User.js";
 
 const siteSchema = new Schema(
@@ -53,6 +54,12 @@ const siteSchema = new Schema(
     {
         type: mongoose.Schema.Types.ObjectId,
         ref: "review",
+    },
+  ],
+  hotel:[
+    {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "hotel",
     },
   ],
   siteAdmin: {

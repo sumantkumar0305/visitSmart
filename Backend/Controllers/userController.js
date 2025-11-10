@@ -67,7 +67,7 @@ export const userLogout = async (req, res) => {
     if (err) return res.status(400).json({message: "Some error is happend", type: "error"});
     req.session.destroy(); // optional: fully clear session
     res.clearCookie('connect.sid'); // name of your session cookie
-    res.status(200).json({ message: 'Logged out successfully', type: "success" });
+    res.status(200).json({ message: 'Log out successfully', type: "success" });
   });
 };
 

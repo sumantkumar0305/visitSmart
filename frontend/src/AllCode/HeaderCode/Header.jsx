@@ -22,12 +22,14 @@ const Header = () => {
 
   const checkUserProfile = async () => {
     const loggedIn = await fetchUserProfile();
-    console.log(loggedIn);
-    if(loggedIn === null){
+    if (!loggedIn || !loggedIn.user) {
       setIsLogin(false);
-    }else{
-      setIsLogin(loggedIn.isAuthenticated);
+      sessionStorage.removeItem("userId"); // optional cleanup
+      return;
     }
+    // If valid user data is found, save it
+    sessionStorage.setItem("userId", loggedIn.user._id);
+    setIsLogin(loggedIn.isAuthenticated);
   };
 
   const location = useLocation();
@@ -59,7 +61,7 @@ const Header = () => {
     try{
       const response = await axios.post("http://localhost:8080/user/logout", {}, { withCredentials: true });
       const { type, message } = response.data;
-
+      sessionStorage.removeItem("userId");
       checkUserProfile();    
       setAlert({
         type: type,

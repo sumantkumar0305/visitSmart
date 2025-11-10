@@ -3,11 +3,13 @@ import axios from "axios";
 import { useLocation } from "react-router-dom";
 import AlertMsg from "../AlertMsg";
 import Search from "./Search"
-import Card from "./CardCode/Card";
+import Card from "./CardCode/Card";  
 import { Box } from "@mui/material";
 
 export default function MainPageCode(){
    const [data, setData] = useState([]);
+   const [alert, setAlert] = useState();
+   const location = useLocation();
   
     useEffect(()=>{
       const fetchData = async () => {
@@ -22,8 +24,12 @@ export default function MainPageCode(){
     fetchData();
     }, []);
 
-  const location = useLocation();
-  const alert = location.state?.alert;
+  useEffect(() => {
+    if (location.state?.alert) {
+      setAlert(location.state.alert);
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   return (
     <Box sx={{backgroundColor: "black"}}>

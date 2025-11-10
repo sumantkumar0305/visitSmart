@@ -5,6 +5,7 @@ import { connect } from "mongoose";
 import userRoutes from './Routes/userRoutes.js';
 import siteRoutes from './Routes/siteRoutes.js';
 import review from "./Routes/reviewRoutes.js";
+import hotelRoutes from './Routes/hostelRoutes.js'
 import { findSingalReview } from "./Controllers/reviewController.js";
 import passport from "passport";
 import session from "express-session";
@@ -60,6 +61,7 @@ app.use('/user', userRoutes);
 app.use('/site/data', siteRoutes);
 app.use('/site/review', review);
 app.use('/find/singal/review/:reviewId', findSingalReview);
+app.use('/hotel', hotelRoutes);
 
 
 const port = process.env.PORT;

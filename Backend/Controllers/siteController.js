@@ -17,15 +17,10 @@ export const findSingalData = async(req, res)=>{
         if (!mongoose.Types.ObjectId.isValid(ID)) {
             return res.status(500).json({ message: "Invalid site ID", type: "error" });
         }
-        let singalData = await siteSchema.findById(ID).populate("review");
+        let singalData = await siteSchema.findById(ID).populate("review").populate("hotel");
         return res.json(singalData);
     }catch(err){
         console.log(err);
         return res.status(500).json({ message: err.message ||"This palace data are not find" });
     }
 }
-
-// if (!mongoose.Types.ObjectId.isValid(id)) {
-//     // return next(new expressError(400, 'Invalid Listing ID'));
-//     return res.status(500).json({ message: "Invalid site ID", type: "error" });
-// }

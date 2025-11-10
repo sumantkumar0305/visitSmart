@@ -4,7 +4,6 @@ import {
   Box,
   Typography,
   Paper,
-  Button,
   Divider,
 } from "@mui/material";
 import ReviewHelper from "./ReviewHelper"
@@ -20,6 +19,7 @@ import { fetchReviews, fetchUserProfile } from "../../middleware";
 
 const Review = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [reviews, setReviews] = useState([]); // 🔹 Array to store multiple reviews
@@ -52,7 +52,6 @@ const Review = () => {
 
   const handleDelete =async(reviewid)=> {
     try{
-      
       const response = await axios.post(`http://localhost:8080/site/review/delete/${reviewid}`);
       const { type, message } = response.data;
       setAlert({ type, message });
@@ -70,7 +69,8 @@ const Review = () => {
     setEditReview(reviewData);
   }
 
-  const handleSubmit = async () => {
+const handleSubmit = async () => {
+  // ✅ 1. Validate rating & comment
   if (rating === 0 || comment.trim() === "") {
     setAlert({
       type: "error",
@@ -79,30 +79,47 @@ const Review = () => {
     return;
   }
 
+  console.log(ID);-
   setLoading(true);
-
   const newReview = { rating, comment };
 
   try {
     const loggedIn = await fetchUserProfile();
-    console.log(loggedIn.user._id);
-    const authorId = loggedIn.user._id;
-    const response = await axios.post(`http://localhost:8080/site/review/save/${ID}/${authorId}`, newReview);
+    const authorId = loggedIn?.user?._id;
+
+    if (!authorId) {
+      setAlert({
+        type: "error",
+        message: "Please log in first then submit the review",
+      });
+      sessionStorage.setItem("Path", location.pathname);
+
+      setTimeout(() => {
+        navigate("/login/form");
+      }, 1500);   
+      setLoading(false);
+      return;
+    }
+
+    const response = await axios.post(`http://localhost:8080/site/review/save/${ID}/${authorId}`,newReview);
     const { type, message } = response.data;
     setAlert({ type, message });
-    // Reset form
+
     setRating(0);
     setComment("");
-    loadReviews();
-    setLoading(false);
+    await loadReviews(); // ensure reviews reload before setting loading to false
+
   } catch (error) {
     console.error("Review submission failed:", error);
 
     setAlert({
       type: "error",
-      message: error.message || "An error occurred while submitting your review.",
+      message:
+        error.response?.data?.message ||
+        error.message ||
+        "An error occurred while submitting your review.",
     });
-  }finally{
+  } finally {
     setLoading(false);
   }
 };
@@ -155,7 +172,7 @@ useEffect(() => {
         ):(
         <ReviewBtn handleSubmit={handleSubmit} />
         )}
-      </Paper>        
+      </Paper>          
       )}
 
       {/* 🧩 Result Box Section */}

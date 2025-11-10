@@ -10,7 +10,7 @@ export const saveReview = async(req,res)=>{
 
         if (!mongoose.Types.ObjectId.isValid(ID)) {
             return res.status(500).json({ message: "Invalid site ID", type: "error" });
-        }
+        }   
 
         const newReview = new review({ rating, comment, author: authorId });
         await newReview.save();
