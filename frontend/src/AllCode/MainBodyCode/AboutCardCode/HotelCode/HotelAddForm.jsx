@@ -8,8 +8,8 @@ import {
   Stack,
 } from "@mui/material";
 import axios from "axios";
-import InputField from "./InputField";
-import ImageUpload from "./ImageUpload";
+import InputField from "./HotelAddForm/InputField";
+import ImageUpload from "./HotelAddForm/ImageUpload";
 import AlertMsg from "../../../AlertMsg";
 import CircularProgress from "@mui/material/CircularProgress";
 

@@ -7,12 +7,10 @@ import AboutCard from "./AllCode/MainBodyCode/AboutCardCode/AboutCard";
 import Review from "./AllCode/MainBodyCode/AboutCardCode/ReviewCode/Review";
 import ReviewEdit from "./AllCode/MainBodyCode/AboutCardCode/ReviewCode/ReviewEdit";
 import HotelAddForm from "./AllCode/MainBodyCode/AboutCardCode/HotelCode/HotelAddForm";
+import AboutHotel from "./AllCode/MainBodyCode/AboutCardCode/HotelCode/AboutHotel/AboutHotel";
 import {Routes, Route} from "react-router-dom";
 
 function App() {
-  const checkUserProfile = async () => {
-      const loggedIn = await fetchUserProfile();
-    };
   return (
     <>
       <Header />
@@ -24,6 +22,7 @@ function App() {
         <Route path="/show/site/review/page" element={<Review/>} />
         <Route path="/hello" element={<ReviewEdit/>} />
         <Route path="/add/hotel/form" element={<HotelAddForm/>} />
+        <Route path="/about/hotel/details" element={<AboutHotel />} />
       </Routes>
       <Footer/>
     </>

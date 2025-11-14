@@ -1,6 +1,26 @@
-import { Typography, Grid, Paper, Box, Rating, Stack } from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  Typography,
+  Grid,
+  Paper,
+  Box,
+  Divider,
+} from "@mui/material";
+import HotelImage from "./HotelCard/HoteLImage";
+import HotelHeader from "./HotelCard/HotelHeader";
+import HotelLocation from "./HotelCard/HotelLocation";
+import HotelBottom from "./HotelCard/HotelBottom";
+
 
 export default function HotelCard({ hotelData }) {
+  const navigate = useNavigate();
+
+  const handleClickView = (hotel) => {
+    console.log(hotel.data);
+    navigate("/about/hotel/details", { state: { hotelData: hotel.data } });
+  };
+
+
   return (
     <>
       <Typography
@@ -23,127 +43,41 @@ export default function HotelCard({ hotelData }) {
               <Paper
                 elevation={5}
                 sx={{
-                  p: 3,
                   borderRadius: "20px",
-                  overflow: "hidden",
+                  overflow: "hidden", // Clips the zooming image
                   background:
                     "linear-gradient(180deg, #ffffff 70%, #f8fafc 100%)",
                   transition: "transform 0.3s ease, box-shadow 0.3s ease",
-                  height: 420, // ⬅️ Increased card height
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
                   "&:hover": {
                     transform: "translateY(-8px)",
                     boxShadow: "0 12px 30px rgba(0,0,0,0.15)",
                   },
                 }}
               >
-                {/* Image Section */}
-                {hotel.data.image && hotel.data.image.length > 0 ? (
-                  <Box
-                    component="img"
-                    src={hotel.data.image[0]}
-                    alt={hotel.data.name}
-                    sx={{
-                      width: "100%",
-                      height: 220, // ⬅️ Bigger image
-                      objectFit: "cover",
-                      borderRadius: "16px",
-                      mb: 2,
-                      transition: "all 0.4s ease",
-                      "&:hover": { transform: "scale(1.04)" },
-                    }}
-                  />
-                ) : (
-                  <Box
-                    sx={{
-                      width: "100%",
-                      height: 220,
-                      borderRadius: "16px",
-                      mb: 2,
-                      bgcolor: "#f0f0f0",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "#888",
-                      fontStyle: "italic",
-                    }}
-                  >
-                    No Image Available
-                  </Box>
-                )}
+                {/* Image Section with Frame */}
+                <HotelImage hotel={hotel} />
 
-                {/* Hotel Name + Rating */}
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  sx={{ mb: 1 }}
-                >
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      fontWeight: 700,
-                      color: "#1a1a1a",
-                      flex: 1,
-                    }}
-                  >
-                    {hotel.data.name}
-                  </Typography>
+                {/* Content Section */}
+                <Box sx={{ p: 3 }}>
+                  {/* Header: Name + Rating */}
+                  <HotelHeader hotel={hotel} />
 
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <Rating
-                      name="hotel-rating"
-                      value={hotel.data.rating || 0}
-                      precision={0.5}
-                      readOnly
-                      size="medium"
-                    />
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        fontWeight: 600,
-                        color: "#f59e0b", // golden yellow tone
-                      }}
-                    >
-                      {hotel.data.rating ? hotel.data.rating.toFixed(1) : "—"}
-                    </Typography>
-                  </Stack>
-                </Stack>
+                  {/* Location */}
+                  <HotelLocation hotel={hotel} />
+                  <Divider sx={{ my: 2 }} />
 
-                {/* City */}
-                <Typography variant="body1" color="text.secondary">
-                  📍 {hotel.data.city}
-                </Typography>
-
-                {/* Price */}
-                <Typography
-                  variant="h6"
-                  sx={{
-                    mt: 1.5,
-                    color: "#16a34a",
-                    fontWeight: 600,
-                  }}
-                >
-                  💰 ₹{hotel.data.price.toLocaleString()}
-                </Typography>
+                  {/* Footer: Price + Button */}
+                  <HotelBottom hotel={hotel} handleClickView={()=>handleClickView(hotel)} />
+                </Box>
               </Paper>
             </Grid>
           ))}
         </Grid>
       ) : (
-        <Typography
-          color="text.secondary"
-          sx={{
-            textAlign: "center",
-            mt: 4,
-            fontStyle: "italic",
-            fontSize: "1.1rem",
-          }}
-        >
-          No hotels available yet. Check back soon!
-        </Typography>
+        <>
+          <h1>No hotels available yet.</h1>
+          <h4>Please check back soon!</h4>
+        </>
       )}
     </>
   );
