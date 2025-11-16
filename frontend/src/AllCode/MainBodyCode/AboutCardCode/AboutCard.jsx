@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Box, Paper, Typography, Grid,} from "@mui/material";
+import { Box, Paper} from "@mui/material";
 import Location from "./Location";
 import AboutSite from "./AboutSite";
 import SiteHeader from "./AboutCard/SiteHeader";
@@ -9,7 +9,8 @@ import ImageSlider from "./AboutCard/ImageSlider";
 import AddHotelBtn from "./AboutCard/AddHotelBtn";
 import HotelCard from "./HotelCode/HotelCard";
 import AlertMsg from "../../AlertMsg";
-
+import { fetchUserProfile } from "../middleware";
+   
 export default function AboutCard() {
   const [rating, setRating] = useState(0);
   const navigate = useNavigate();
@@ -18,6 +19,8 @@ export default function AboutCard() {
   const aboutSite = location.state?.aboutSite;  
   const [siteData, setSiteData] = useState(aboutSite); // store live site data
   const [hotelData, setHotelData] = useState([]);
+  const [isLoggedin, setIsLoggedin] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   
   const fetchSiteData = async (id) => {
     try {
@@ -27,6 +30,17 @@ export default function AboutCard() {
       console.error("Error fetching site data:", err);
     }
   };
+
+  const currentUserID = async() =>{
+    const loggedIn = await fetchUserProfile();
+    // console.log(loggedIn.isAuthenticated);
+    setIsLoggedin(loggedIn.isAuthenticated)
+    setCurrentUser(loggedIn);
+  }
+
+  useEffect(()=>{
+    currentUserID();
+  }, []);
 
   const fetchRating = async (reviews) => {
     if (!reviews || reviews.length === 0) {
@@ -144,11 +158,13 @@ export default function AboutCard() {
 
       {/* Hotel near for this */}
       <Box mt={4}>
-        <HotelCard hotelData={hotelData} />
+        <HotelCard hotelData={hotelData} currentUser={currentUser} />
           {/* ➕ Add New Hotel Button */}
-          <Box mt={4}>
-            <AddHotelBtn addNewHotel={addNewHotel} />
-          </Box>
+          {isLoggedin && (
+            <Box mt={4}>
+              <AddHotelBtn addNewHotel={addNewHotel} />
+            </Box>
+          )}
         </Box>
     </Paper>
     </>

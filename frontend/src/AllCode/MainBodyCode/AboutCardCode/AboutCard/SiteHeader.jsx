@@ -20,7 +20,7 @@ export default function SiteHeader({title, rating, handleReviewClick}){
                 fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.5rem" },
                 }}
             >
-                {title}
+                {title} 
             </Typography>
 
             <Box

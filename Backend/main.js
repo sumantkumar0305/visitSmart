@@ -5,7 +5,7 @@ import { connect } from "mongoose";
 import userRoutes from './Routes/userRoutes.js';
 import siteRoutes from './Routes/siteRoutes.js';
 import review from "./Routes/reviewRoutes.js";
-import hotelRoutes from './Routes/hostelRoutes.js'
+import hotelRoutes from './Routes/hotelRoutes.js'
 import { findSingalReview } from "./Controllers/reviewController.js";
 import passport from "passport";
 import session from "express-session";

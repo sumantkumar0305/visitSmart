@@ -25,21 +25,3 @@ export const fetchUserProfile = async()=>{
     return null;
   }
 }
-
-
-// try{
-    //   const response = await axios.get("http://localhost:8080/user/profile", {
-    //     withCredentials: true, // 👈 this is critical
-    //   });
-
-    //   console.log(response);
-    //   if(response.status === 200 && response.data.user){
-    //     return true
-    //   }else{
-    //     // setIsLogin(false);
-    //     return false;
-    //   }
-    // }catch(err){
-    //   console.log(err);
-    //   return false;
-    // }

@@ -17,7 +17,7 @@ export const saveReview = async(req,res)=>{
         
         const site = await siteSchema.findById(ID);
         if (!site) {
-        return res.status(404).json({ message: "Sorry, we couldn't find the palace you're looking for.", type: "error" });
+            return res.status(404).json({ message: "Sorry, we couldn't find the palace you're looking for.", type: "error" });
         }
 
         site.review.push(newReview._id);

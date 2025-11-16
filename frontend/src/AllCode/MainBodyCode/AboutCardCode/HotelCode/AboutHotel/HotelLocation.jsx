@@ -1,7 +1,10 @@
-import { Grid, Box, Typography, Divider } from "@mui/material";
+import { Grid, Box, Typography, Divider, Tooltip, IconButton } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 export default function HotelLocation({hotelData}){
+  const mapQuery = `${hotelData?.city}, ${hotelData?.state}, ${hotelData?.pincode}`;
+  const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}`;
+
     const cardStyle = {
         p: { xs: 3, md: 4 },
         borderRadius: 3,
@@ -19,7 +22,15 @@ export default function HotelLocation({hotelData}){
         <Grid item xs={12} md={5}>
           <Box sx={cardStyle}>
             <Box display="flex" alignItems="center" gap={1.5}>
-              <LocationOnIcon sx={{ color: "#f43f5e" }} />
+              <Tooltip title="See on google map">
+                <IconButton 
+                  href={mapUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <LocationOnIcon sx={{ color: "#f43f5e" }}/>
+                </IconButton>
+              </Tooltip>
               <Typography
                 variant="h5"
                 sx={{
@@ -39,6 +50,9 @@ export default function HotelLocation({hotelData}){
             </Typography>
             <Typography variant="body1" sx={{ color: "text.secondary", mb: 1.2 }}>
               <b>City:</b> {hotelData.city}
+            </Typography>
+            <Typography variant="body1" sx={{ color: "text.secondary", mb: 1.2 }}>
+              <b>Pincode:</b> {hotelData.pincode}
             </Typography>
             <Typography variant="body1" sx={{ color: "text.secondary" }}>
               <b>Nearest Railway:</b> {hotelData.railway || "New Delhi"}

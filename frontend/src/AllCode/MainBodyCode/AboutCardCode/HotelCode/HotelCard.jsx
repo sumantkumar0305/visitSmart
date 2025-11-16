@@ -12,12 +12,11 @@ import HotelLocation from "./HotelCard/HotelLocation";
 import HotelBottom from "./HotelCard/HotelBottom";
 
 
-export default function HotelCard({ hotelData }) {
+export default function HotelCard({ hotelData, currentUser }) {
   const navigate = useNavigate();
 
   const handleClickView = (hotel) => {
-    console.log(hotel.data);
-    navigate("/about/hotel/details", { state: { hotelData: hotel.data } });
+    navigate("/about/hotel/details", { state: { hotelData: hotel.data, currUser: currentUser } });
   };
 
 

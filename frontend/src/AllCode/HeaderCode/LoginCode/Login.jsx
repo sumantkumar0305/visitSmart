@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Avatar,
@@ -19,13 +19,22 @@ import AlertMsg from "../../AlertMsg";
 import { fetchUserProfile } from "../../MainBodyCode/middleware";
 
 export default function Login() {
+  const location = useLocation();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({
-      type: "",
-      message: ""
-    });
+    type: "",
+    message: ""
+  });
+  // const errorMsg = location.state?.alertMsg;
+
+  // useEffect(()=>{
+  //   setAlert({
+  //     type: errorMsg.type,
+  //     message: errorMsg.msg
+  //   })
+  // }, [errorMsg])
     
 
   // handle input change

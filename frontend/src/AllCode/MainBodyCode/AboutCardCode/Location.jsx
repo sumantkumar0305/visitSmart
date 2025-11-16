@@ -7,7 +7,7 @@ export default function Location({ aboutSite }) {
   const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}`;
 
   return (
-    <Box
+    <Box   
       sx={{
         bgcolor: "#f5f7fa",
         p: 3,

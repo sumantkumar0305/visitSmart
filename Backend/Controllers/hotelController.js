@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import siteSchema from "../Models/SiteData.js";
 import hotel from "../Models/hotel.js";
+
 import { v2 as cloudinary } from "cloudinary";
 import streamifier from "streamifier";
 
@@ -69,7 +70,7 @@ export const findSingalHotel = async(req, res)=>{
       return res.status(400).json({ message: "Invalid site ID", type: "error" });
     }
 
-    const hotelData = await hotel.findById(hotelId);
+    const hotelData = await hotel.findById(hotelId).populate({ path: "review", populate: { path: "author", model: "User", } });;
     res.status(200).json(hotelData);
   }catch(err){
     console.log(err);

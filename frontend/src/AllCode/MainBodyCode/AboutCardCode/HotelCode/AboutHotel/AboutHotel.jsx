@@ -6,17 +6,25 @@ import {
   Grid,
   Divider 
 } from "@mui/material";
-import HotelName from "./AboutHotel/HotelName";
-import HotelImage from "./AboutHotel/HotelImage";
-import HotelPrice from "./AboutHotel/HotelPrice";
-import HotelDes from "./AboutHotel/HotelDes";
-import HotelLocation from "./AboutHotel/HotelLocation";
+import HotelName from "./HotelName";
+import HotelImage from "./HotelImage";
+import HotelPrice from "./HotelPrice";
+import HotelDes from "./HotelDes";
+import HotelLocation from "./HotelLocation";
+//import HotelReview from "./AboutHotel/HotelReview";
+import HotelReview from "./HotelReview";
+import AlertMsg from "../../../../AlertMsg";
 
 export default function AboutHotel() {
   const location = useLocation();
   const [imgCount, setImgCount] = useState(0);
   const hotelData = location.state?.hotelData;
+  const currentUser = location.state?.currUser;
   const imageArr = hotelData?.image || [];
+  const [alert, setAlert] = useState({
+    type: "",
+    message: ""
+  });
 
   if (!hotelData) {
     return (
@@ -45,6 +53,7 @@ export default function AboutHotel() {
   };
 
   return (
+    // {alert && <AlertMsg alert={alert} /> }
     <Box
       sx={{
         maxWidth: 1200,
@@ -56,7 +65,7 @@ export default function AboutHotel() {
       }}
     >
       {/* --- Hotel Header --- */}
-      <HotelName hotelData={hotelData} />
+      <HotelName hotelData={hotelData} loginData={currentUser.user} />
 
       {/* --- Main Image --- */}
       {imageArr.length > 0 && (
@@ -75,6 +84,7 @@ export default function AboutHotel() {
       </Grid>
 
       <Divider />
+      <HotelReview hotelData={hotelData} />
     </Box>
   );
 }

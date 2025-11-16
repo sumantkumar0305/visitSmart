@@ -79,7 +79,6 @@ const handleSubmit = async () => {
     return;
   }
 
-  console.log(ID);-
   setLoading(true);
   const newReview = { rating, comment };
 
