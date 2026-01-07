@@ -28,18 +28,6 @@ const userSchema = new mongoose.Schema({
         type:"String",
         required: true
     },
-    Order: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Order"
-        }
-    ],
-    Notification: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Notification"
-        }
-    ]
 });
  
 export default mongoose.model("User", userSchema);
