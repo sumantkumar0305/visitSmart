@@ -14,7 +14,7 @@ export default function HotelImage({imageArr, hotelData, handlePrev, handleNext,
             mb: 4,
             position: "relative",
           }}
-        >
+        >  
           {/* Hotel Image */}
           <img
             src={imageArr[imgCount]}

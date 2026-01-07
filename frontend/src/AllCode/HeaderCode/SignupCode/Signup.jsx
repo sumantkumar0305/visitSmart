@@ -18,15 +18,18 @@ import SignupInput from "../CommonCode/InputText";
 import SignupPassword from "../CommonCode/InputPassword";
 import SignupBtn from "../CommonCode/Button";
 import SignupBottom from "./SignupBottom";
-import AlertMsg from "../../AlertMsg";
+import AlertMsg from "../../AlertMsg"; 
+import PhoneNumber from "./PhoneNumber"; 
 import { fetchUserProfile } from "../../MainBodyCode/middleware";
 
 export default function Signup() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  // const [countryCode, setCountryCode] = useState('+91');
   const [formData, setFormData] = useState({
     username: "",
     email: "",
+    countryCode: "+91",
     phone: "",
     password: "",
   });
@@ -49,6 +52,7 @@ export default function Signup() {
     e.preventDefault();
     setLoading(true);
       try{
+        console.log(formData);
         const response = await axios.post("http://localhost:8080/user/signup", formData, { withCredentials: true });
 
         const { type, message } = response.data;
@@ -91,7 +95,7 @@ export default function Signup() {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
-            <PersonAddAlt1Icon />
+            <PersonAddAlt1Icon />  
           </Avatar>
           <Typography component="h1" variant="h5" fontWeight="bold">
             Create Your VisitSmart Account
@@ -103,7 +107,7 @@ export default function Signup() {
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: "100%" }}>
             <SignupInput formData={formData} handleChange={handleChange} ID="username" label="Enter Username" name="username" type="text" icon={AccountCircleIcon} />
             <SignupInput formData={formData} handleChange={handleChange} ID="email" label="Enter Email" name="email" type="email" icon={EmailIcon} />
-            <SignupInput formData={formData} handleChange={handleChange} ID="phone" label="Phone Number" name="phone" type="tel" icon={PhoneIcon} />
+            <PhoneNumber handleChange={handleChange} formData={formData} />
             <SignupPassword formData={formData} handleChange={handleChange} name="password" ID="password" label="Enter Password" />
 
             {loading ? (

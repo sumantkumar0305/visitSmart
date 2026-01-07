@@ -88,6 +88,13 @@ export const editReview = async(req, res)=>{
             { rating, comment },
         );
 
+        if (!updatedReview) {
+        return res.status(404).json({
+            message: "Review not found",
+            type: "error"
+        });
+        }
+
         res.status(200).json({
             message: 'Review updated successfully.',
             type: "success"

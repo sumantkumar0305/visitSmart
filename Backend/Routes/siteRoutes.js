@@ -6,4 +6,4 @@ router.get('/find', findSiteData);
 
 router.get('/find/by/:id', findSingalData)
 
-export default router;
+export default router; 

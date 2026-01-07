@@ -1,24 +1,37 @@
-import React, { useEffect } from 'react';
-import { useNavigationType } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Box, IconButton, Drawer, List} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import ButtonCode from './ButtonCode';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
+import { 
+  AppBar, 
+  Toolbar, 
+  IconButton, 
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 import axios from 'axios';
 import { fetchUserProfile } from '../MainBodyCode/middleware';
-// import SearchBar from '../MainBodyCode/MainPageCode';
+import UserProfile from './UserProfile';
+import MobileDrawer from './MobileDrawer';
+import DesktopNav from './DesktopNav';
 
 const Header = () => {
-  // const location = useLocation();
   const navigate = useNavigate()
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
+  const [user, setUser] = useState(null);
   const [alert, setAlert] = useState({
     type: "",
     message: ""
   });
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleProfileOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleProfileClose = () => {
+    setAnchorEl(null);
+  };
 
   const checkUserProfile = async () => {
     const loggedIn = await fetchUserProfile();
@@ -30,11 +43,12 @@ const Header = () => {
     // If valid user data is found, save it
     sessionStorage.setItem("userId", loggedIn.user._id);
     setIsLogin(loggedIn.isAuthenticated);
+    setUser(loggedIn.user)
   };
 
   const location = useLocation();
-  useEffect(()=>{
-  checkUserProfile();
+  useEffect(() => {
+    checkUserProfile();
   }, [location.pathname]);
 
   const toggleDrawer = (open) => () => {
@@ -50,7 +64,7 @@ const Header = () => {
   }
 
   const handleAboutClick =async(e)=>{
-    navigate('/');
+    navigate('/about/web/page');
   }  
 
   const handleHomeClick =()=>{
@@ -62,7 +76,10 @@ const Header = () => {
       const response = await axios.post("http://localhost:8080/user/logout", {}, { withCredentials: true });
       const { type, message } = response.data;
       sessionStorage.removeItem("userId");
-      checkUserProfile();    
+      setDrawerOpen(false); // 👈 close drawer
+      setIsLogin(false);
+      setUser(null);
+      // checkUserProfile();    
       setAlert({
         type: type,
         message: message
@@ -94,35 +111,15 @@ const Header = () => {
           }}
         >
           {/* Title */}
-          <Typography
-            variant="h5"
-            component="div"
-            sx={{
-              fontWeight: 'bold',
-              letterSpacing: 1,
-              color: '#fff',
-              fontFamily: 'Roboto, sans-serif',
-              textShadow: '1px 1px 3px rgba(0,0,0,0.3)',
-              flexGrow: 1,
-            }}
-          >
-            Visits Mart
-          </Typography>
-
-          {/* Desktop Buttons */}
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
-            <ButtonCode label="Home" handleOnClick={handleHomeClick} />
-            <ButtonCode label="About" handleOnClick={handleAboutClick} />
-            {!isLogin ? (
-              <>
-                <ButtonCode label="Login" handleOnClick={handleLoginClick} />
-                <ButtonCode label="Sign up" handleOnClick={handleSignupClick} />
-              </>
-            ) : (
-              <ButtonCode label="Logout" handleOnClick={handleLogoutClick} />
-            )}
-
-          </Box>
+          <DesktopNav 
+          handleAboutClick={handleAboutClick}
+          handleHomeClick={handleHomeClick}
+          handleLoginClick={handleLoginClick}
+          handleSignupClick={handleSignupClick}
+          isLogin={isLogin}
+          user={user}
+          handleProfileOpen={handleProfileOpen}
+          />
 
           {/* Mobile Menu Icon */}
           <IconButton
@@ -138,45 +135,25 @@ const Header = () => {
       </AppBar>
 
       {/* Mobile Drawer */}
-      <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
-        <Box sx={{ width: 150 }} onClick={toggleDrawer(false)}>
-          <List>
-            <Box sx={{mb: 3}}>
-              <ButtonCode label="Home" handleOnClick={handleHomeClick} />
-            </Box>
+      <MobileDrawer 
+      drawerOpen={drawerOpen} 
+      toggleDrawer={toggleDrawer}
+      handleHomeClick={handleHomeClick}
+      handleAboutClick={handleAboutClick}
+      handleLoginClick={handleLoginClick}
+      handleSignupClick={handleSignupClick}
+      user={user}
+      isLogin={isLogin}
+      />
 
-            <Box sx={{mb: 3}}>
-              <ButtonCode label="About" handleOnClick={handleAboutClick} />
-            </Box>
-
-            {!isLogin ? (
-              <>
-                <Box sx={{mb: 3}}>
-                  <ButtonCode label="Login" handleOnClick={handleLoginClick} />
-                </Box>
-                <Box sx={{mb: 3}}>
-                  <ButtonCode label="Sign up" handleOnClick={handleSignupClick} />
-                </Box>
-              </>
-            ) : (
-              <Box sx={{mb: 3}}>
-                <ButtonCode label="Log out" handleOnClick={handleLogoutClick} />
-              </Box>
-            )}
-
-      
-          </List>
-        </Box>
-      </Drawer>
+      <UserProfile 
+      anchorEl={anchorEl} 
+      handleProfileClose={handleProfileClose} 
+      user={user} 
+      handleLogoutClick={handleLogoutClick} 
+      />
     </>
   );
 };
 
 export default Header;
-
-
-
-  // const location = useLocation();
-  // useEffect(()=>{
-  // checkUserProfile();
-  // }, [location.pathname]);

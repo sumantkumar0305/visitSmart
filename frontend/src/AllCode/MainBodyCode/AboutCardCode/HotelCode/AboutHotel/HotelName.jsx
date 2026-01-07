@@ -6,6 +6,7 @@ import { useState } from "react";
 import AlertMsg from "../../../../AlertMsg";
 
 export default function HotelName({ hotelData, loginData }) {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [alert, setAlert] = useState({
     type: "",
@@ -13,6 +14,19 @@ export default function HotelName({ hotelData, loginData }) {
   });
 
   const showReviewPage = () => {
+    if(!loginData){
+      setAlert({
+        type: "error",
+        message: "Please log in first then submit the review",
+      });
+      sessionStorage.setItem("Path", "/about/hotel/details");
+
+      setTimeout(() => {
+        navigate("/login/form");
+      }, 1100);   
+      // setLoading(false);
+      return;
+    }
     setOpen(true);
   };
 

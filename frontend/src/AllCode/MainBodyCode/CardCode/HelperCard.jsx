@@ -18,30 +18,6 @@ export default function HelperCard({ data }) {
       const response = await axios.get(`http://localhost:8080/site/data/find/by/${ID}`);
 
       const aboutSiteDate = response.data;
-      // const reviewIds = response.data.review || [];
-
-      // let sum = 0;
-      // for(let id of reviewIds){
-      //   const reviewRes = await axios.get(`http://localhost:8080/find/singal/review/${id._id}`);
-      //   sum += reviewRes.data.rating
-      // }
-      // console.log(sum);
-
-      // const reviewPromises = reviewIds.map(async (id) => {
-      //   const reviewRes = await axios.get(`http://localhost:8080/site/review/fetch/${id}`);
-      //   return reviewRes.data.rating; // only return rating
-      // });
-      // const ratingsData = await Promise.all(reviewPromises);
-
-      // const avg =
-      //   reversed.length > 0
-      //     ? reversed.reduce((a, b) => a + b, 0) / reversed.length
-      //     : 0;
-      // setRating(avg);
-
-      // const avg = reviewIds.length > 0 ? Math.ceil((sum / reviewIds.length) * 10) / 10 : 0;
-
-      // setRating(avg);
 
       setTimeout(()=>{
         navigate('/about/card/in/details', {state: {aboutSite: aboutSiteDate}});
@@ -71,7 +47,7 @@ export default function HelperCard({ data }) {
       <CardMedia
         component="img"
         height="300"
-        image={data.image}
+        image={data.image[0]}
         alt={data.title}
         sx={{ objectFit: 'cover' }}
       />
@@ -93,25 +69,6 @@ export default function HelperCard({ data }) {
         >
           {data.title}
         </Typography>
-        {/* <Box
-          sx={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            px: 2,
-            py: 0.75,
-            bgcolor: '#ff9800',
-            color: 'white',
-            fontSize: 26,
-            fontWeight: 'bold',
-            borderRadius: '30px',
-            boxShadow: 2,
-            gap: 0.5,
-          }}
-        >
-          {rating}
-          <StarBorderIcon sx={{ fontSize: 26 }} />
-        </Box> */}
       </CardContent>
 
       <CardContent

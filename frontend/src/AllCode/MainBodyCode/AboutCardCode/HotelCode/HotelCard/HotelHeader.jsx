@@ -1,7 +1,13 @@
 import { Stack, Typography } from "@mui/material"
 import { Star } from "@mui/icons-material"
+import { useState } from "react"
 
 export default function HotelHeader({hotel}){
+    const [review, setReview] = useState(hotel.data.review);
+    const avgRating = review.length
+  ? review.reduce((sum, r) => sum + r.rating, 0) / review.length
+  : 0;
+
     return (
         <>
             <Stack
@@ -45,7 +51,8 @@ export default function HotelHeader({hotel}){
                         color: "#fff",
                     }}
                     >
-                    {hotel.data.rating ? hotel.data.rating.toFixed(1) : "5"}
+                    {/* {hotel.data.rating ? avgRating.toFixed(1) : "5"} */}
+                    { avgRating.toFixed(1) }
                     </Typography>
                     <Star sx={{ color: "#fff", fontSize: 22 }} />
                 </Stack>

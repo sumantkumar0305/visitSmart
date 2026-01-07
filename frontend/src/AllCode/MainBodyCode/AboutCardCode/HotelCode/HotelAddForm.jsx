@@ -17,12 +17,15 @@ export default function HotelAddForm() {
     const location = useLocation();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-    const [hotelData, setHotelData] = useState({   
-        name: "",
-        aboutHotel: "",
-        price: "",
-        city: "",
-        pincode: "",
+    const [hotelData, setHotelData] = useState({
+      name: "",
+      aboutHotel: "",
+      doubleAC_Price: "",
+      singleAC_Price: "",
+      doubleNonAC_Price: "",
+      singleNonAC_Price: "",
+      city: "",
+      pincode: "",
     });
     const [images, setImages] = useState([]);
     const [alert, setAlert] = useState({
@@ -43,6 +46,7 @@ export default function HotelAddForm() {
   };
 
   const ID = location.state?.ID;
+  const owner = location.state?.owner;
   // submit handler
   const handleSubmit = async (e) => {
   e.preventDefault();
@@ -52,6 +56,7 @@ export default function HotelAddForm() {
     for (let key in hotelData) {
     formData.append(key, hotelData[key]);
     }
+    formData.append("owner", owner);
 
     images.forEach((image) => {
     formData.append("images", image); // "images" must match backend field name
@@ -59,19 +64,26 @@ export default function HotelAddForm() {
 
     const response = await axios.post(`http://localhost:8080/hotel/data/save/${ID}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
-    });
+    });  
 
     const { type, message } = response.data;
+    // const type = "error";
+    // const message = "Some error is happend";
 
     setAlert({
       type: type,
       message: message
     });
 
+    // setAlert({
+    //   type: "error",
+    //   message: "Ssuccess"
+    // })
+
     setTimeout(() => {
       sessionStorage.setItem("hotelAlert", JSON.stringify({ type, message }));
       navigate(-1);
-    }, 1500);
+    }, 500);
 
     //alert("Hotel uploaded successfully!");
   } catch (err) {
@@ -95,7 +107,7 @@ export default function HotelAddForm() {
       sx={{ maxWidth: 500, mx: "auto", p: 4, mt: 5, borderRadius: 3 }}
     >
       <Typography variant="h5" fontWeight="bold" textAlign="center" mb={3}>
-        Add New Hotel
+        Add New Hotel  
       </Typography>
 
       <Box component="form" onSubmit={handleSubmit}>

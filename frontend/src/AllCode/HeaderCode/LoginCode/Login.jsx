@@ -43,7 +43,7 @@ export default function Login() {
   setFormData((prev) => ({
    ...prev,
     [name]: value
-  }));
+  }));  
   };
 
   // handle form submit
@@ -67,9 +67,19 @@ export default function Login() {
       const path = sessionStorage.getItem("Path") || "/";
       sessionStorage.removeItem("Path");
 
-      setTimeout(()=>{
+      // setTimeout(()=>{
+      //   navigate(path, { state: { alert: { type, message } } });
+      // }, 1500);
+      if(path !== "/"){
+        setTimeout(()=>{
+          navigate(-1);
+        }, 1100);
+      }else{
+        setTimeout(()=>{
         navigate(path, { state: { alert: { type, message } } });
       }, 1500);
+      }
+      
     }catch(err){
         console.log(err);
         setAlert({

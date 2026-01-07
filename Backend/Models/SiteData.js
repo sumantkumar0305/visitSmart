@@ -35,20 +35,12 @@ const siteSchema = new Schema(
     maxlength: 6,
   },
   image: {
-    type: String,
+    type: [String],
     required: true,
-  },
-  image2: {
-    type: String,
-    required: true,
-  },
-  image3: {
-    type: String,
-    required: true,
-  },
-  image4: {
-    type: String,
-    required: true,
+    validate: {
+      validator: (arr) => arr.length > 0,
+      message: "At least one image is required.",
+    }
   },
   review:[
     {
@@ -66,7 +58,6 @@ const siteSchema = new Schema(
     type: mongoose.Schema.Types.ObjectId,
     ref: "User"
   },
-  
   },
   {
     timestamps: true,

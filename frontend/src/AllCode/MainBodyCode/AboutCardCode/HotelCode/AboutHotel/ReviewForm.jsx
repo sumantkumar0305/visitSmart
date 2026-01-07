@@ -2,11 +2,14 @@ import { Box, TextField, Rating, Button, Typography } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
 
-export default function ReviewForm({ onClose, rating: initialRating = 0, comment: initialComment = "", hotelId, authorId, setAlert}) {
+export default function ReviewForm({ onClose, 
+  rating: initialRating = 0, comment: initialComment = "", 
+  hotelId, authorId, setAlert}) {
   const [rating, setRating] = useState(initialRating);
   const [comment, setComment] = useState(initialComment);
 
   const handleSubmit = async() => {
+    onClose()
     if (!rating || !comment) {
       setAlert({
         type: "error",
@@ -15,15 +18,11 @@ export default function ReviewForm({ onClose, rating: initialRating = 0, comment
       return;
     }
 
-    setTimeout(()=>{
-      onClose();
-    }, 1000);4
-
     try{
       const newReview = {rating, comment};
 
       const res = await axios.post(`http://localhost:8080/hotel/review/save/${hotelId}/${authorId}`, newReview);
-
+    
       const { type, message } = res.data;
       setAlert({ type, message });
 

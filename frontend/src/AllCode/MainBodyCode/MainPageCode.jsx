@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import AlertMsg from "../AlertMsg";
-import Search from "./Search"
+import FilterCode from "./FilterSite/Filter";
 import Card from "./CardCode/Card";  
 import { Box } from "@mui/material";
 
@@ -10,19 +10,19 @@ export default function MainPageCode(){
    const [data, setData] = useState([]);
    const [alert, setAlert] = useState();
    const location = useLocation();
+   const [searchResult, setSearchResult] = useState([]);
   
-    useEffect(()=>{
-      const fetchData = async () => {
-      try {
-        const response = await axios.get("http://localhost:8080/site/data/find");
-        setData(response.data); // axios auto-parses JSON
-      } catch (err) {
-        console.log(err);
-      } 
-    };
-
-    fetchData();
-    }, []);
+  useEffect(()=>{
+    const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/site/data/find");
+      setData(response.data); 
+    } catch (err) {
+      console.log(err);
+    } 
+  };
+  fetchData();
+  }, []);
 
   useEffect(() => {
     if (location.state?.alert) {
@@ -32,10 +32,10 @@ export default function MainPageCode(){
   }, [location.state]);
 
   return (
-    <Box sx={{backgroundColor: "black"}}>
-      <Search helpersData={data} />
+    <Box>
+      <FilterCode helpersData={data} setData={setSearchResult} />
       {alert && <AlertMsg alert={alert} />}
-      <Card data={data} />
+      <Card data={searchResult.length > 0 ? searchResult : data} />
     </Box>
   );
 }

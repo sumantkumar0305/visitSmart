@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import express from "express";
 import passport from "passport";
@@ -5,7 +6,7 @@ import userSchema from "../Models/User.js";
 
 export const saveUserData = async (req, res) => {
   try {
-    const { username, email, phone, password } = req.body;
+    const { username, email, countryCode, phone, password, } = req.body;
     const existingUser = await userSchema.findOne({ email });
 
     if (existingUser)
@@ -17,6 +18,7 @@ export const saveUserData = async (req, res) => {
     const newUser = new userSchema({
       username,
       email,
+      countryCode: countryCode,
       phoneNumber: phone,
       password: hashedPassword,
     });
@@ -70,6 +72,40 @@ export const userLogout = async (req, res) => {
     res.status(200).json({ message: 'Log out successfully', type: "success" });
   });
 };
+
+export const updateProfile = async(req, res) => {
+  try{
+    const userID = req.params.userID;
+
+    if (!mongoose.Types.ObjectId.isValid(userID)) {
+      return res.status(400).json({
+        message: "Invalid user ID",
+        type: "error"
+      });
+    }
+
+    const { userName, DOB, phoneNumber, } = req.body;
+
+   const updatedUser = await userSchema.findByIdAndUpdate(
+      userID,
+      {
+        username: userName,
+        DOB,
+        phoneNumber,
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        message: "User not found",
+        type: "error"
+      });
+    }
+  }catch(err){
+    console.log(err);
+  }
+}
 
 
 export const isLoginCheck = (req, res) => {

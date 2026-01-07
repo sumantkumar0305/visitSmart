@@ -14,7 +14,7 @@ export default function InputText({formData, handleChange, ID, label, name, type
             name={name}
             type={type}
             autoComplete={name}
-            value={formData[name]}
+            value={formData[name]} 
             onChange={handleChange}
 
             InputProps={{

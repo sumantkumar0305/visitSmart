@@ -1,31 +1,97 @@
 import { useState, useEffect } from "react";
-import { Box, Typography, Rating, Paper, Divider, Tooltip, Dialog, DialogTitle, DialogContent  } from "@mui/material";
+import { 
+  Box, 
+  Typography, 
+  Rating, 
+  Paper,
+  Divider, 
+  Tooltip, 
+  Dialog, 
+  DialogTitle, 
+  DialogContent 
+} from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import ReviewForm from "./ReviewForm";
-import { fetchHotelReview } from "../../../middleware.js";
+import ReviewEditForm from "./ReviewEditForm";
+import axios from "axios";
 
-export default function HotelReview({ hotelData }) {
-  // const [avgRating, setAvgRating] = useState(0);
-  // const [reviews, setReviews] = useState([]);
-  const reviews = hotelData.review;
+export default function HotelReview({ hotelData, currentUser, setAlert}) {
+  const [reviews, setReviewList] = useState(hotelData.review);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [open, setOpen] = useState(false);
+  const [reviewIds, setReviewIds] = useState(null);
+  const [refresh, setRefresh] = useState(false);
   
-  const showReviewPage = (rate, com) => {
+  const showReviewPage = (rate, com, ID) => {
     setComment(com);
     setRating(rate);
-    setOpen(true);
+    setReviewIds(ID);
+    setOpen(true);   
   };
-  console.log(reviews[0].author.username)
 
   const closeReviewPage = () => {
     setOpen(false);
   };
 
+  const updatedHotel = async()=>{
+    try{
+      const updatedHotel = await axios.get(
+        `http://localhost:8080/hotel/find/singal/data/${hotelData._id}`
+      );
+
+      setReviewList(updatedHotel.data.review);
+    }catch(err){
+      console.log(err);
+    }
+  }
+
+  useEffect(() => {
+    updatedHotel();
+  }, [hotelData._id, refresh]);
+
+  
   // ⭐ Calculate Average Rating
-  const avgRating = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+  const avgRating = reviews.length
+  ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+  : 0;
+
+  const handleDelete = async(reviewId)=>{
+    try{
+      const res = await axios.delete(`http://localhost:8080/hotel/review/delete/${reviewId}/${hotelData._id}`);
+      const { type, message } = res.data;
+      setAlert({ type, message });
+
+      setReviewList(prev => prev.filter(r => r._id !== reviewId));
+      setRefresh(prev => !prev);
+    }catch(err){
+      console.log(err);
+      setAlert({
+        type: "error",
+        message: "Some error hapend in deleting review"
+      });
+    }
+  }
+
+  const handleEdit = async() =>{
+    try{
+      const res = await axios.put(
+        `http://localhost:8080/hotel/review/edit/${reviewIds}/${hotelData._id}`,
+        { rating, comment }
+      );
+
+      closeReviewPage();
+      const { type, message } = res.data;
+      setAlert({ type, message });
+      setRefresh(prev => !prev);
+    }catch(err){
+      console.log(err);
+      setAlert({
+        type: "error",
+        message: "Error while updating review"
+      });
+    }
+  }
 
   return (
     <Paper
@@ -77,7 +143,7 @@ export default function HotelReview({ hotelData }) {
       <Divider sx={{ mb: 2 }} />
 
       {/* ⭐ List of Reviews */}
-      {reviews.map((review, index) => (
+      {[...reviews].reverse().map((review, index) => (
         <Paper
             key={index}
             variant="outlined"
@@ -108,25 +174,27 @@ export default function HotelReview({ hotelData }) {
                 "{review.comment}"
               </Typography>
 
-              <Box display={"flex"} gap={3}>
-                <Tooltip title="Delete review">
-                  <DeleteIcon sx={{
-                    "&:hover":{
-                      cursor: "pointer"
-                      
-                    }
-                  }} />
-                </Tooltip>
+              {review.author?.username === currentUser?.username && (
+                <Box display={"flex"} gap={3}>
+                  <Tooltip title="Delete review">
+                    <DeleteIcon onClick={() => handleDelete(review._id)} sx={{
+                      "&:hover":{
+                        cursor: "pointer"
+                        
+                      }
+                    }} />
+                  </Tooltip>
 
-                <Tooltip title="Edit review">
-                  <EditIcon onClick={() => showReviewPage(review.rating, review.comment)} sx={{
-                    "&:hover":{
-                      cursor: "pointer"
-                      
-                    }
-                  }} />
-                </Tooltip>
-              </Box>
+                  <Tooltip title="Edit review">
+                    <EditIcon onClick={() => showReviewPage(review.rating, review.comment, review._id)} sx={{
+                      "&:hover":{
+                        cursor: "pointer"
+                        
+                      }
+                    }} />
+                  </Tooltip>
+                </Box>
+              )}
             </Box>
         </Paper>
       ))}
@@ -137,7 +205,13 @@ export default function HotelReview({ hotelData }) {
           Write Your Review for <b>{hotelData.name}</b>
         </DialogTitle>
         <DialogContent>
-          <ReviewForm onClose={closeReviewPage} rating={rating} comment={comment} />
+          <ReviewEditForm
+            rating={rating}
+            setRating={setRating}
+            comment={comment}
+            setComment={setComment}
+            handleEdit={handleEdit}
+          />
         </DialogContent>
       </Dialog>
     </Paper>

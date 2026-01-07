@@ -1,5 +1,6 @@
 import mongoose, { Schema, model } from "mongoose";
-import hotelReview from "./hotelReview.js"; // ✅ add .js extension for ES Modules
+import hotelReview from "./hotelReview.js"; 
+import User from "./User.js";
 
 const hotelSchema = new Schema(
   {
@@ -21,10 +22,25 @@ const hotelSchema = new Schema(
         message: "At least one image is required.",
       }
     },
-    price: {
+    doubleAC_Price: {
       type: Number,
-      required: true,
-      min: 0, // ✅ ensure price is non-negative
+      default: 0
+    },
+    singleAC_Price: {
+      type: Number,
+      default: 0
+    },
+    doubleNonAC_Price: {
+      type: Number,
+      default: 0
+    },
+    singleNonAC_Price: {
+      type: Number,
+      default: 0
+    },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
     },
     city: {
       type: String,
@@ -43,7 +59,7 @@ const hotelSchema = new Schema(
       },
     ],
   },
-  {
+  { 
     timestamps: true,
   }
 );

@@ -21,6 +21,7 @@ export default function AboutCard() {
   const [hotelData, setHotelData] = useState([]);
   const [isLoggedin, setIsLoggedin] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [updateHotel, setUpdateHotel] = useState(false);
   
   const fetchSiteData = async (id) => {
     try {
@@ -35,12 +36,12 @@ export default function AboutCard() {
     const loggedIn = await fetchUserProfile();
     // console.log(loggedIn.isAuthenticated);
     setIsLoggedin(loggedIn.isAuthenticated)
-    setCurrentUser(loggedIn);
+    setCurrentUser(loggedIn);  
   }
 
   useEffect(()=>{
-    currentUserID();
-  }, []);
+    currentUserID();  
+  }, [location.state]);
 
   const fetchRating = async (reviews) => {
     if (!reviews || reviews.length === 0) {
@@ -65,7 +66,7 @@ export default function AboutCard() {
 
   const fetchHostel = async (hotels)=>{
     if(!hotels || hotels.length === 0){
-      return;
+      return;  
     }
 
     try{
@@ -83,7 +84,7 @@ export default function AboutCard() {
     if(aboutSite?._id){
       fetchSiteData(aboutSite._id);
     }
-  }, [aboutSite]);
+  }, [aboutSite]); 
 
   useEffect(() => {
     const alertFromStorage = sessionStorage.getItem("hotelAlert");
@@ -101,17 +102,18 @@ export default function AboutCard() {
     if(siteData?.hotel){
       fetchHostel(siteData.hotel);
     }
-  }, [siteData]);
+  }, [siteData, updateHotel]);
 
   // 🖼️ State for image slider
-  const image = [aboutSite?.image, aboutSite?.image2, aboutSite?.image3, aboutSite?.image4]// support single or multiple
-  
+  // const image = [aboutSite?.image, aboutSite?.image2, aboutSite?.image3, aboutSite?.image4]// support single or multiple
+  const image = aboutSite?.image;
+
   const handleReviewClick =()=>{
     navigate('/show/site/review/page', {state: {ID: aboutSite._id}});
   }
 
   const addNewHotel =()=>{
-    navigate('/add/hotel/form', {state: {ID: aboutSite._id}});
+    navigate('/add/hotel/form', {state: {ID: aboutSite._id, owner: currentUser.user._id}});
   }
 
   return (
@@ -150,7 +152,7 @@ export default function AboutCard() {
           gap={{ xs: 2, sm: 3 }}
           width="100%"
         >
-          <AboutSite aboutSite={aboutSite} />
+          <AboutSite aboutSite={aboutSite} /> 
           <Location aboutSite={aboutSite} />
         </Box>
       </Box>
@@ -158,7 +160,11 @@ export default function AboutCard() {
 
       {/* Hotel near for this */}
       <Box mt={4}>
-        <HotelCard hotelData={hotelData} currentUser={currentUser} />
+        <HotelCard 
+        setUpdateHotel={setUpdateHotel} 
+        hotelData={hotelData} 
+        currentUser={currentUser} 
+        />
           {/* ➕ Add New Hotel Button */}
           {isLoggedin && (
             <Box mt={4}>

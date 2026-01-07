@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import {
   Box,
@@ -6,25 +6,52 @@ import {
   Grid,
   Divider 
 } from "@mui/material";
+import axios from "axios";
 import HotelName from "./HotelName";
 import HotelImage from "./HotelImage";
-import HotelPrice from "./HotelPrice";
+import RoomRent from "./HotelBook/RoomRent";
 import HotelDes from "./HotelDes";
 import HotelLocation from "./HotelLocation";
-//import HotelReview from "./AboutHotel/HotelReview";
 import HotelReview from "./HotelReview";
+import { fetchUserProfile } from "../../../middleware";
 import AlertMsg from "../../../../AlertMsg";
 
 export default function AboutHotel() {
   const location = useLocation();
   const [imgCount, setImgCount] = useState(0);
-  const hotelData = location.state?.hotelData;
-  const currentUser = location.state?.currUser;
+  const [hotelData, setHotelData] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
   const imageArr = hotelData?.image || [];
   const [alert, setAlert] = useState({
     type: "",
     message: ""
   });
+
+  const currentUserID = async() =>{
+    const loggedIn = await fetchUserProfile();
+    setCurrentUser(loggedIn.user);  
+  }
+
+  useEffect(() => {
+    currentUserID(); 
+    if (location.state?.hotelData) {
+      setHotelData(location.state.hotelData);
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    if (!hotelData || !hotelData._id) return;  // <-- FIX
+
+    const fetchUpdateData = async () => {
+      const updatedHotel = await axios.get(
+        `http://localhost:8080/hotel/find/singal/data/${hotelData._id}`
+      );
+      setHotelData(updatedHotel.data);
+    };
+
+    fetchUpdateData();
+  }, [hotelData]);
+
 
   if (!hotelData) {
     return (
@@ -53,7 +80,8 @@ export default function AboutHotel() {
   };
 
   return (
-    // {alert && <AlertMsg alert={alert} /> }
+    <>
+    {alert.message && <AlertMsg alert={alert} /> }
     <Box
       sx={{
         maxWidth: 1200,
@@ -65,7 +93,7 @@ export default function AboutHotel() {
       }}
     >
       {/* --- Hotel Header --- */}
-      <HotelName hotelData={hotelData} loginData={currentUser.user} />
+      <HotelName hotelData={hotelData} loginData={currentUser} />
 
       {/* --- Main Image --- */}
       {imageArr.length > 0 && (
@@ -73,7 +101,7 @@ export default function AboutHotel() {
       )}
 
       {/* --- Price Section --- */}
-      <HotelPrice hotelData={hotelData} />
+      <RoomRent hotelData={hotelData} loginData={currentUser} />
 
       {/* --- About & Location --- */}
       <Grid container spacing={4} justifyContent="space-evenly" sx={{mb: 5}}>
@@ -84,7 +112,8 @@ export default function AboutHotel() {
       </Grid>
 
       <Divider />
-      <HotelReview hotelData={hotelData} />
+      <HotelReview hotelData={hotelData} currentUser={currentUser} setAlert={setAlert}  />
     </Box>
+    </>
   );
 }
