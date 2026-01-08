@@ -14,6 +14,8 @@ export default function ArrowIcon({ handleLeftClick, handleRightClick}){
                 backgroundColor: "#000000",
                 color: "white",
                 "&:hover": { backgroundColor: "rgba(255,255,255,0.9)" },
+                zIndex: 10,              // 👈 VERY IMPORTANT
+                pointerEvents: "auto",   // 👈 ensure click works
             }}
             >
             <ArrowBackIos />
@@ -31,6 +33,8 @@ export default function ArrowIcon({ handleLeftClick, handleRightClick}){
                 backgroundColor: "#000000",
                 color: "white",
                 "&:hover": { backgroundColor: "rgba(255,255,255,0.9)" },
+                zIndex: 10,              // 👈 VERY IMPORTANT
+                pointerEvents: "auto",   // 👈 ensure click works
             }}
             >
             <ArrowForwardIos />

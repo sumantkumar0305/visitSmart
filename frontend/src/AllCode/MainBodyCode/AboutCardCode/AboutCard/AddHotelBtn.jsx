@@ -1,11 +1,12 @@
 import React from "react";
 import { Box, Button } from "@mui/material";
+import CircularProgress from '@mui/material/CircularProgress';
 
-export default function AddHotelBtn({addNewHotel}){
+export default function AddHotelBtn({isLoad, addNewHotel}){
     return (
         <Box className="box" sx={{ display: "flex", justifyContent: "flex-end",  mt: 3}}>
             <Button
-            onClick={addNewHotel}
+            onClick={addNewHotel} 
             variant="contained"
             sx={{
                 bgcolor: "#1976d2",        
@@ -24,7 +25,7 @@ export default function AddHotelBtn({addNewHotel}){
                 },
             }}
             >
-            Add Hotel
+                {isLoad ? <CircularProgress color="white" /> : "Add Hotel"} 
             </Button>
         </Box>
     )

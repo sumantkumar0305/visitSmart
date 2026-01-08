@@ -5,7 +5,7 @@ import { Box, Paper} from "@mui/material";
 import Location from "./Location";
 import AboutSite from "./AboutSite";
 import SiteHeader from "./AboutCard/SiteHeader";
-import ImageSlider from "./AboutCard/ImageSlider";
+import ImageSlider from "./AboutCard/ImageSlider";  
 import AddHotelBtn from "./AboutCard/AddHotelBtn";
 import HotelCard from "./HotelCode/HotelCard";
 import AlertMsg from "../../AlertMsg";
@@ -22,6 +22,7 @@ export default function AboutCard() {
   const [isLoggedin, setIsLoggedin] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [updateHotel, setUpdateHotel] = useState(false);
+  const [isLoad, setIsLoad] = useState(false);
   
   const fetchSiteData = async (id) => {
     try {
@@ -34,7 +35,6 @@ export default function AboutCard() {
 
   const currentUserID = async() =>{
     const loggedIn = await fetchUserProfile();
-    // console.log(loggedIn.isAuthenticated);
     setIsLoggedin(loggedIn.isAuthenticated)
     setCurrentUser(loggedIn);  
   }
@@ -74,7 +74,7 @@ export default function AboutCard() {
         hotels.map((h)=> axios.get(`http://localhost:8080/hotel/find/singal/data/${h._id}`))
       );
 
-      setHotelData(responses);
+      setHotelData(responses.map(res => res.data));
     }catch(err){
       console.error("Error fetching hotels:", err);
     }
@@ -106,13 +106,14 @@ export default function AboutCard() {
 
   // 🖼️ State for image slider
   // const image = [aboutSite?.image, aboutSite?.image2, aboutSite?.image3, aboutSite?.image4]// support single or multiple
-  const image = aboutSite?.image;
+  const image = Array.isArray(aboutSite?.image) ? aboutSite.image : [];
 
   const handleReviewClick =()=>{
     navigate('/show/site/review/page', {state: {ID: aboutSite._id}});
   }
 
   const addNewHotel =()=>{
+    setIsLoad(true);
     navigate('/add/hotel/form', {state: {ID: aboutSite._id, owner: currentUser.user._id}});
   }
 
@@ -168,7 +169,7 @@ export default function AboutCard() {
           {/* ➕ Add New Hotel Button */}
           {isLoggedin && (
             <Box mt={4}>
-              <AddHotelBtn addNewHotel={addNewHotel} />
+              <AddHotelBtn isLoad={isLoad} addNewHotel={addNewHotel} /> 
             </Box>
           )}
         </Box>

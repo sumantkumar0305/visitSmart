@@ -5,18 +5,17 @@ import ArrowIcon from "./ArrowIcon";
 export default function ImageSlider({ image = [], title }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  if (!Array.isArray(image) || image.length === 0) return null;
+
   const totalImages = image.length;
 
   const handleRightClick = () => {
-    setCurrentIndex(prev =>
-      (prev + 1) % totalImages
-    );
-  }; 
+    setCurrentIndex(prev => (prev + 1) % totalImages);
+  };
 
   const handleLeftClick = () => {
-    setCurrentIndex(prev =>
-      (prev - 1 + totalImages) % totalImages
-    );
+    console.log(image);
+    setCurrentIndex(prev => (prev - 1 + totalImages) % totalImages);
   };
 
   return (

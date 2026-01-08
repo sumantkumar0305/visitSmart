@@ -33,6 +33,7 @@ export default function HotelBook() {
     idProof: null,
   });
   const [countryCode, setCountryCode] = useState("+91");
+  const [isLoad, setIsLoad] = useState(false);
 
   // State to store quantity of each room type
   const [roomQuantities, setRoomQuantities] = useState({
@@ -84,6 +85,7 @@ export default function HotelBook() {
   ]);
 
   const handleIncrement = (type) => {
+    setIsLoad(false);
     if(!userDetails.checkin?.trim()){
         setShow(true);
         setMsg("Please enter checkin date");
@@ -111,13 +113,15 @@ export default function HotelBook() {
   };
 
     const handleDecrement = (type) => {
-        setRoomQuantities((prev) => ({
-        ...prev,
-        [type]: Math.max(0, prev[type] - 1), // Prevent negative numbers
-        }));
+      setIsLoad(false);
+      setRoomQuantities((prev) => ({
+      ...prev,
+      [type]: Math.max(0, prev[type] - 1), // Prevent negative numbers
+      }));
     };
 
     const handleChange = (e) => {
+      setIsLoad(false);
       const { name, value, files } = e.target;
       if (name === "idProof" && files.length > 0) {
           setUserDetails((prev) => ({ ...prev, idProof: files[0] }));
@@ -131,6 +135,7 @@ export default function HotelBook() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoad(true);
         try {
             if(!userDetails.name?.trim()){
                 setShow(true);
@@ -228,7 +233,7 @@ export default function HotelBook() {
           <Fade in={show}>
             <Box mt={3}>
                 <Alert severity="error" onClose={() => setShow(false)} variant="filled">
-                    {msg}
+                    {msg} 
                 </Alert>
             </Box>
           </Fade>
@@ -240,7 +245,7 @@ export default function HotelBook() {
                 sx={{ mt: 2, py: 1.5, fontWeight: 700, borderRadius: 2 }}
                 fullWidth
             >
-                Book Now
+              {isLoad ? <CircularProgress color="white" /> : "Book Now"} 
             </Button> 
         </Paper>
       </Container>
