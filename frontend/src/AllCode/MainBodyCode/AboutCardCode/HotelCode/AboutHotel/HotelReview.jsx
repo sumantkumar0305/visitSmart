@@ -37,7 +37,7 @@ export default function HotelReview({ hotelData, currentUser, setAlert}) {
   const updatedHotel = async()=>{
     try{
       const updatedHotel = await axios.get(
-        `http://localhost:8080/hotel/find/singal/data/${hotelData._id}`
+        `https://visitsmart-backend.onrender.com/hotel/find/singal/data/${hotelData._id}`
       );
 
       setReviewList(updatedHotel.data.review);
@@ -58,7 +58,7 @@ export default function HotelReview({ hotelData, currentUser, setAlert}) {
 
   const handleDelete = async(reviewId)=>{
     try{
-      const res = await axios.delete(`http://localhost:8080/hotel/review/delete/${reviewId}/${hotelData._id}`);
+      const res = await axios.delete(`https://visitsmart-backend.onrender.com/hotel/review/delete/${reviewId}/${hotelData._id}`);
       const { type, message } = res.data;
       setAlert({ type, message });
 
@@ -76,7 +76,7 @@ export default function HotelReview({ hotelData, currentUser, setAlert}) {
   const handleEdit = async() =>{
     try{
       const res = await axios.put(
-        `http://localhost:8080/hotel/review/edit/${reviewIds}/${hotelData._id}`,
+        `https://visitsmart-backend.onrender.com/hotel/review/edit/${reviewIds}/${hotelData._id}`,
         { rating, comment }
       );
 
