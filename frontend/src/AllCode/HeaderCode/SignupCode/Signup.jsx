@@ -53,7 +53,7 @@ export default function Signup() {
     setLoading(true);
       try{
         console.log(formData);
-        const response = await axios.post("http://localhost:8080/user/signup", formData, { withCredentials: true });
+        const response = await axios.post("https://visitsmart-backend.onrender.com/user/signup", formData, { withCredentials: true });
 
         const { type, message } = response.data;
 
