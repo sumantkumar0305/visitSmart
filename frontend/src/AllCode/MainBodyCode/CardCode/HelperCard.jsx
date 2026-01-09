@@ -15,7 +15,7 @@ export default function HelperCard({ data }) {
   const handleClick=async()=>{
     setLoading(true)
     try{
-      const response = await axios.get(`http://localhost:8080/site/data/find/by/${ID}`);
+      const response = await axios.get(`https://visitsmart-backend.onrender.com/site/data/find/by/${ID}`);
 
       const aboutSiteDate = response.data;
 
