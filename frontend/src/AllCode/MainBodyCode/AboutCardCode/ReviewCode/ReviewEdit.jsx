@@ -34,7 +34,7 @@ export default function ReviewEdit({ editReview, setIsEdit, fetchReviews }) {
 
         console.log(reviewMsg);
 
-        const response = await axios.put(`http://localhost:8080/site/review/edit/${ID}`, reviewMsg);
+        const response = await axios.put(`https://visitsmart-backend.onrender.com/site/review/edit/${ID}`, reviewMsg);
         setIsEdit(false);
         fetchReviews();
     }catch(err){
