@@ -3,7 +3,7 @@ import axios from "axios";
 
 export const fetchReviews = async (ID) => {
   try {
-    const response = await axios.get(`http://localhost:8080/site/review/fetch/${ID}`);
+    const response = await axios.get(`https://visitsmart-backend.onrender.com/site/review/fetch/${ID}`);
     const reversedReviews = response.data.slice().reverse();
     return reversedReviews; // ✅ Return the data to the component
   } catch (error) {
@@ -15,7 +15,7 @@ export const fetchReviews = async (ID) => {
 
 export const fetchUserProfile = async()=>{
     try {
-    const response = await axios.get("http://localhost:8080/user/profile", {
+    const response = await axios.get("https://visitsmart-backend.onrender.com/user/profile", {
       withCredentials: true, // important!
     });
     // console.log(response.data.user);
