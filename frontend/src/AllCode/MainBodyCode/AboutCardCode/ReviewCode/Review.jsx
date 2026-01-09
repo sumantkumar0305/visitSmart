@@ -52,7 +52,7 @@ const Review = () => {
 
   const handleDelete =async(reviewid)=> {
     try{
-      const response = await axios.post(`http://localhost:8080/site/review/delete/${reviewid}`);
+      const response = await axios.post(`https://visitsmart-backend.onrender.com/site/review/delete/${reviewid}`);
       const { type, message } = response.data;
       setAlert({ type, message });
       loadReviews();
@@ -100,7 +100,7 @@ const handleSubmit = async () => {
       return;
     }
 
-    const response = await axios.post(`http://localhost:8080/site/review/save/${ID}/${authorId}`,newReview);
+    const response = await axios.post(`https://visitsmart-backend.onrender.com/site/review/save/${ID}/${authorId}`,newReview);
     const { type, message } = response.data;
     setAlert({ type, message });
 
