@@ -62,23 +62,16 @@ export default function HotelAddForm() {
     formData.append("images", image); // "images" must match backend field name
     });
 
-    const response = await axios.post(`http://localhost:8080/hotel/data/save/${ID}`, formData, {
+    const response = await axios.post(`https://visitsmart-backend.onrender.com/hotel/data/save/${ID}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
     });  
 
     const { type, message } = response.data;
-    // const type = "error";
-    // const message = "Some error is happend";
 
     setAlert({
       type: type,
       message: message
     });
-
-    // setAlert({
-    //   type: "error",
-    //   message: "Ssuccess"
-    // })
 
     setTimeout(() => {
       sessionStorage.setItem("hotelAlert", JSON.stringify({ type, message }));
