@@ -27,14 +27,6 @@ export default function Login() {
     type: "",
     message: ""
   });
-  // const errorMsg = location.state?.alertMsg;
-
-  // useEffect(()=>{
-  //   setAlert({
-  //     type: errorMsg.type,
-  //     message: errorMsg.msg
-  //   })
-  // }, [errorMsg])
     
 
   // handle input change
@@ -51,7 +43,7 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     try{
-      const response = await axios.post("http://localhost:8080/user/login", formData, { withCredentials: true });
+      const response = await axios.post("https://visitsmart-backend.onrender.com/user/login", formData, { withCredentials: true });
 
       const { type, message } = response.data;
 
