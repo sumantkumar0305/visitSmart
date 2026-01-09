@@ -44,7 +44,7 @@ export default function AboutHotel() {
 
     const fetchUpdateData = async () => {
       const updatedHotel = await axios.get(
-        `http://localhost:8080/hotel/find/singal/data/${hotelData._id}`
+        `https://visitsmart-backend.onrender.com/hotel/find/singal/data/${hotelData._id}`
       );
       setHotelData(updatedHotel.data);
     };
