@@ -68,7 +68,7 @@ export default function UserProfile({
     setIsLoad(true)
     try{
       const userID = user._id;
-      const res = axios.put(`http://localhost:8080/user/update/profile/${userID}`, formData, { withCredentials: true })
+      const res = axios.put(`https://visitsmart-backend.onrender.com/user/update/profile/${userID}`, formData, { withCredentials: true })
 
       console.log(res);
       closeEdit();
