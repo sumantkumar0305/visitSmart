@@ -23,7 +23,7 @@ app.use(cors({
 }));
 
 
-//========== Connect DataBase ======
+//========== Connect DataBase ====== 
 const dburl = process.env.MONGOURL
 
 const connectDB = async() =>{
@@ -36,7 +36,20 @@ const connectDB = async() =>{
 }
 connectDB();
 
-app.use(session({
+const store = MongoStore.create({
+  mongoUrl: dburl,
+  crypto: {
+    secret: process.env.SESSION_KEY
+  },
+  touchAfter: 24*3600,
+});
+
+store.on("error", ()=>{
+  console.log("Error in mongo session store", err);
+})
+
+const sessionOptions = {
+  store,
   secret: process.env.SESSION_KEY,
   resave: false,
   saveUninitialized: false,
@@ -47,8 +60,9 @@ app.use(session({
     secure: false,       // ❗ important for localhost (HTTP)
     sameSite: "lax"
   }
-}));
+}
 
+app.use(session(sessionOptions));
 app.use(passport.initialize());
 app.use(passport.session());
 
