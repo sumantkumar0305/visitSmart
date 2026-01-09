@@ -73,7 +73,7 @@ const Header = () => {
 
   const handleLogoutClick =async()=>{
     try{
-      const response = await axios.post("http://localhost:8080/user/logout", {}, { withCredentials: true });
+      const response = await axios.post("https://visitsmart-backend.onrender.com/user/logout", {}, { withCredentials: true });
       const { type, message } = response.data;
       sessionStorage.removeItem("userId");
       setDrawerOpen(false); // 👈 close drawer
