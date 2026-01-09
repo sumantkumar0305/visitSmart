@@ -26,7 +26,7 @@ export default function AboutCard() {
   
   const fetchSiteData = async (id) => {
     try {
-      const res = await axios.get(`http://localhost:8080/site/data/find/by/${id}`);
+      const res = await axios.get(`https://visitsmart-backend.onrender.com/site/data/find/by/${id}`);
       setSiteData(res.data);
     } catch (err) {
       console.error("Error fetching site data:", err);
@@ -51,7 +51,7 @@ export default function AboutCard() {
 
     try {
       const responses = await Promise.all(
-        reviews.map((r) => axios.get(`http://localhost:8080/find/singal/review/${r._id}`))
+        reviews.map((r) => axios.get(`https://visitsmart-backend.onrender.com/find/singal/review/${r._id}`))
       );
 
       const ratings = responses.map((res) => res.data.rating);
@@ -71,7 +71,7 @@ export default function AboutCard() {
 
     try{
       const responses = await Promise.all(
-        hotels.map((h)=> axios.get(`http://localhost:8080/hotel/find/singal/data/${h._id}`))
+        hotels.map((h)=> axios.get(`https://visitsmart-backend.onrender.com/hotel/find/singal/data/${h._id}`))
       );
 
       setHotelData(responses.map(res => res.data));
