@@ -21,7 +21,7 @@ export default function ReviewForm({ onClose,
     try{
       const newReview = {rating, comment};
 
-      const res = await axios.post(`http://localhost:8080/hotel/review/save/${hotelId}/${authorId}`, newReview);
+      const res = await axios.post(`https://visitsmart-backend.onrender.com/hotel/review/save/${hotelId}/${authorId}`, newReview);
     
       const { type, message } = res.data;
       setAlert({ type, message });
