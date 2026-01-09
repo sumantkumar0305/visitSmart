@@ -50,7 +50,7 @@ export default function HotelCard({ setUpdateHotel, hotelData, currentUser }) {
     try{
       const hotelId = hotel.data._id;
       
-      const response = await axios.delete(`http://localhost:8080/hotel/data/remove/${hotelId}`, { withCredentials: true });
+      const response = await axios.delete(`https://visitsmart-backend.onrender.com/hotel/data/remove/${hotelId}`, { withCredentials: true });
 
       const { type, message } = response.data;
 
