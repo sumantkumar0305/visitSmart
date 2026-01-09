@@ -15,7 +15,7 @@ export default function MainPageCode(){
   useEffect(()=>{
     const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/site/data/find");
+      const response = await axios.get("https://visitsmart-backend.onrender.com/site/data/find");
       setData(response.data); 
     } catch (err) {
       console.log(err);
