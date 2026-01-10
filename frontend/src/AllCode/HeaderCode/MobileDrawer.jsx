@@ -14,7 +14,8 @@ export default function MobileDrawer({
     handleLoginClick, 
     handleSignupClick,
     user,
-    isLogin
+    isLogin,
+    handleProfileOpen
 }){
     return (
         <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
@@ -40,9 +41,11 @@ export default function MobileDrawer({
                 ) : (
                 <Box sx={{mb: 3}}>
                     {/* <ButtonCode label="Log out" handleOnClick={handleLogoutClick} /> */}
-                    <Avatar sx={{ bgcolor: "primary.main", cursor: "pointer" }} onClick>
+                    <IconButton onClick={handleProfileOpen}>
+                        <Avatar sx={{ bgcolor: "primary.main" }}>
                         {user?.username?.trim()?.charAt(0)?.toUpperCase()}
-                    </Avatar>
+                        </Avatar>
+                    </IconButton>
                 </Box>
                 )}
             </List>
