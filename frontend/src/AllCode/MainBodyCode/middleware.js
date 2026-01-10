@@ -18,7 +18,6 @@ export const fetchUserProfile = async()=>{
     const response = await axios.get("https://visitsmart-backend.onrender.com/user/profile", {
       withCredentials: true, // important!
     });
-    console.log("Fetch user profile: ",response);
     return response.data; // ✅ more accurate
   } catch (err) {
     console.log("Profile check error:", err);
