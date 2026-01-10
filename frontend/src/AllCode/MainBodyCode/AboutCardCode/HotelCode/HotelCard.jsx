@@ -19,7 +19,7 @@ import AlertMsg from "../../../AlertMsg";
 
 export default function HotelCard({ setUpdateHotel, hotelData, currentUser }) {
   const navigate = useNavigate();
-  const [data, setData] = useState(hotelData);
+  const [data, setData] = useState(hotelData || []);
   const [nameSearch, setNameSearch] = useState('');
   const [alert, setAlert] = useState({
     type: "",
@@ -30,14 +30,15 @@ export default function HotelCard({ setUpdateHotel, hotelData, currentUser }) {
     const search = nameSearch.trim().toLowerCase();
 
     if (!search) {
-      setData(hotelData);
-      return;
-    }
+    setData(hotelData || []);
+    return;
+  }
 
-    const filteredData = hotelData.filter((hotel) =>
-      hotel.data.name.toLowerCase().includes(search)
+    const filteredData = hotelData.filter(
+      (hotel) =>
+        hotel?.data?.name &&
+        hotel.data.name.toLowerCase().includes(search)
     );
-
     setData(filteredData);
   }, [nameSearch, hotelData]);
 
@@ -133,7 +134,7 @@ export default function HotelCard({ setUpdateHotel, hotelData, currentUser }) {
 
       {alert.message && <AlertMsg alert={alert} />}
 
-      {data.length > 0 ? (
+      {Array.isArray(data) && data.length > 0 ? (
         // Grid is inherently responsive, but we ensure the container has padding
         <Grid container spacing={4} sx={{ mt: 2, px: { xs: 2, md: 0 } }}>
           {data.map((hotel) => (
