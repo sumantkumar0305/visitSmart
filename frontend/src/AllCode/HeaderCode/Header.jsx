@@ -56,6 +56,7 @@ const Header = () => {
   };
 
   const handleLoginClick =()=>{
+    console.log(user);
     navigate('/login/form');
   }
 
