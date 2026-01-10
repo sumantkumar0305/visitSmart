@@ -3,7 +3,6 @@ import {
     Box,
     List,
     Avatar, 
-    IconButton
 } from "@mui/material";
 import ButtonCode from "./ButtonCode";
 
@@ -41,12 +40,7 @@ export default function MobileDrawer({
                 </>
                 ) : (
                 <Box sx={{mb: 3}}>
-                    {/* <ButtonCode label="Log out" handleOnClick={handleLogoutClick} /> */}
-                    <IconButton onClick={handleProfileOpen}>
-                        <Avatar sx={{ bgcolor: "primary.main" }}>
-                        {user?.username?.trim()?.charAt(0)?.toUpperCase()}
-                        </Avatar>
-                    </IconButton>
+                    <ButtonCode label="Log out" handleOnClick={handleLogoutClick} /> 
                 </Box>
                 )}
             </List>
