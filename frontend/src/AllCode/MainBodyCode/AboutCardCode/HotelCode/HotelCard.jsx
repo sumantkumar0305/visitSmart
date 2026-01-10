@@ -6,7 +6,7 @@ import {
   Paper,
   Box,
   Divider,
-  TextField, 
+  TextField,
   InputAdornment
 } from "@mui/material";
 import axios from "axios";
@@ -17,17 +17,16 @@ import HotelLocation from "./HotelCard/HotelLocation";
 import HotelBottom from "./HotelCard/HotelBottom";
 import AlertMsg from "../../../AlertMsg";
 
-
 export default function HotelCard({ setUpdateHotel, hotelData, currentUser }) {
   const navigate = useNavigate();
   const [data, setData] = useState(hotelData);
   const [nameSearch, setNameSearch] = useState('');
   const [alert, setAlert] = useState({
-    type: "",  
+    type: "",
     message: ""
   });
 
-  useEffect(()=>{
+  useEffect(() => {
     const search = nameSearch.trim().toLowerCase();
 
     if (!search) {
@@ -42,14 +41,14 @@ export default function HotelCard({ setUpdateHotel, hotelData, currentUser }) {
     setData(filteredData);
   }, [nameSearch, hotelData]);
 
-  const handleClickView = (hotel) => {  
+  const handleClickView = (hotel) => {
     navigate("/about/hotel/details", { state: { hotelData: hotel.data, currUser: currentUser } });
-  };  
-  
-  const handleDeleteHotel = async(hotel) =>{
-    try{
+  };
+
+  const handleDeleteHotel = async (hotel) => {
+    try {
       const hotelId = hotel.data._id;
-      
+
       const response = await axios.delete(`https://visitsmart-backend.onrender.com/hotel/data/remove/${hotelId}`, { withCredentials: true });
 
       const { type, message } = response.data;
@@ -59,7 +58,7 @@ export default function HotelCard({ setUpdateHotel, hotelData, currentUser }) {
         message: message
       });
       setUpdateHotel(prev => !prev);
-    }catch(err){
+    } catch (err) {
       console.log(err);
       setAlert({
         type: "error",
@@ -71,7 +70,7 @@ export default function HotelCard({ setUpdateHotel, hotelData, currentUser }) {
     }
   }
 
-  const handleEditHotel = (hotel) =>{
+  const handleEditHotel = (hotel) => {
     // console.log("Edit ")
     console.log(hotel);
     console.log(currentUser);
@@ -83,14 +82,16 @@ export default function HotelCard({ setUpdateHotel, hotelData, currentUser }) {
         sx={{
           mb: 8,
           display: "flex",
-          flexDirection: "row", // ✅ side by side
+          // RESPONSIVE LAYOUT: Column on mobile, Row on Tablet/Desktop
+          flexDirection: { xs: "column", md: "row" }, 
           alignItems: "center",
-          justifyContent: "space-between", // pushes left & right apart
+          justifyContent: "space-between",
           width: "100%",
-          maxWidth: 800, // optional: control container width
-          minWidth: 600,
-          margin: "0 auto", // center the whole box
+          maxWidth: 1000, // Increased slightly for better spacing
+          // Removed minWidth: 600 which breaks mobile view
+          margin: "0 auto",
           gap: 3,
+          px: { xs: 2, sm: 0 } // Add padding on mobile so it doesn't touch edges
         }}
       >
         {/* TITLE */}
@@ -100,6 +101,9 @@ export default function HotelCard({ setUpdateHotel, hotelData, currentUser }) {
             fontWeight: 700,
             color: "#2C3E50",
             letterSpacing: "0.5px",
+            // Center text on mobile, Left align on desktop
+            textAlign: { xs: "center", md: "left" },
+            width: { xs: "100%", md: "auto" }
           }}
         >
           🏨 Nearby Hotels
@@ -107,12 +111,12 @@ export default function HotelCard({ setUpdateHotel, hotelData, currentUser }) {
 
         {/* SEARCH BOX */}
         <TextField
-          placeholder="Search hotels using hotel name..."
+          placeholder="Search hotels..."
           variant="outlined"
-          onChange={(e)=>setNameSearch(e.target.value)}
+          onChange={(e) => setNameSearch(e.target.value)}
           sx={{
-            width: "100%",
-            maxWidth: 400,
+            width: "100%", // Full width on mobile
+            maxWidth: { xs: "100%", md: 400 }, // Limited width on desktop
             backgroundColor: "#fff",
             borderRadius: 2,
             boxShadow: "0px 2px 6px rgba(0,0,0,0.1)",
@@ -120,7 +124,7 @@ export default function HotelCard({ setUpdateHotel, hotelData, currentUser }) {
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                  <SearchIcon />
+                <SearchIcon />
               </InputAdornment>
             ),
           }}
@@ -130,28 +134,35 @@ export default function HotelCard({ setUpdateHotel, hotelData, currentUser }) {
       {alert.message && <AlertMsg alert={alert} />}
 
       {data.length > 0 ? (
-        <Grid container spacing={4} sx={{mt: 5}}>
+        // Grid is inherently responsive, but we ensure the container has padding
+        <Grid container spacing={4} sx={{ mt: 2, px: { xs: 2, md: 0 } }}>
           {data.map((hotel) => (
+            // xs={12}: Full width on mobile
+            // sm={6}: 2 cards per row on tablet
+            // md={4}: 3 cards per row on desktop
             <Grid item xs={12} sm={6} md={4} key={hotel._id}>
               <Paper
                 elevation={5}
                 sx={{
                   borderRadius: "20px",
-                  overflow: "hidden", // Clips the zooming image
+                  overflow: "hidden",
                   background:
                     "linear-gradient(180deg, #ffffff 70%, #f8fafc 100%)",
                   transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                  height: '100%', // Ensures all cards in a row are same height
+                  display: 'flex',
+                  flexDirection: 'column',
                   "&:hover": {
                     transform: "translateY(-8px)",
                     boxShadow: "0 12px 30px rgba(0,0,0,0.15)",
                   },
-                }}   
+                }}
               >
-                {/* Image Section with Frame */} 
+                {/* Image Section with Frame */}
                 <HotelImage hotel={hotel} />
 
                 {/* Content Section */}
-                <Box sx={{ p: 3 }}>
+                <Box sx={{ p: 3, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                   {/* Header: Name + Rating */}
                   <HotelHeader hotel={hotel} />
 
@@ -159,24 +170,26 @@ export default function HotelCard({ setUpdateHotel, hotelData, currentUser }) {
                   <HotelLocation hotel={hotel} />
                   <Divider sx={{ my: 2 }} />
 
-                  {/* Footer: Price + Button */}
-                  <HotelBottom 
-                  currentUser={currentUser}
-                  hotel={hotel}
-                  handleEditHotel={()=>handleEditHotel(hotel)}
-                  handleDeleteHotel={()=>handleDeleteHotel(hotel)} 
-                  handleClickView={()=>handleClickView(hotel)} 
-                  />
+                  {/* Footer: Price + Button - Pushed to bottom using marginTop auto */}
+                  <Box sx={{ mt: 'auto' }}>
+                    <HotelBottom
+                      currentUser={currentUser}
+                      hotel={hotel}
+                      handleEditHotel={() => handleEditHotel(hotel)}
+                      handleDeleteHotel={() => handleDeleteHotel(hotel)}
+                      handleClickView={() => handleClickView(hotel)}
+                    />
+                  </Box>
                 </Box>
               </Paper>
             </Grid>
           ))}
         </Grid>
       ) : (
-        <>
-          <h1>No hotels available yet.</h1>
-          <h4>Please check back soon!</h4>
-        </>
+        <Box sx={{ textAlign: 'center', mt: 5, px: 2 }}>
+          <Typography variant="h4" gutterBottom>No hotels available yet.</Typography>
+          <Typography variant="h6" color="textSecondary">Please check back soon!</Typography>
+        </Box>
       )}
     </>
   );
