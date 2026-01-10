@@ -18,9 +18,10 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors({
-    origin: "https://visitsmart-backend.onrender.com",
-    credentials: true,
+  origin: "https://visitsmart-url.onrender.com", // FRONTEND URL
+  credentials: true
 }));
+
 
 //========== Connect DataBase ====== 
 const dburl = process.env.MONGOURL
