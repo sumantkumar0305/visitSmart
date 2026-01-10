@@ -144,8 +144,8 @@ const Header = () => {
       handleSignupClick={handleSignupClick}
       user={user}
       isLogin={isLogin}
+      handleProfileOpen={handleProfileOpen}
       />
-
       <UserProfile 
       anchorEl={anchorEl} 
       handleProfileClose={handleProfileClose} 
