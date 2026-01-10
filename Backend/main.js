@@ -24,11 +24,6 @@ app.use(cors({
   credentials: true
 }));
 
-app.options("*", cors({
-  origin: "https://visitsmart-url.onrender.com",
-  credentials: true
-}));
-
 //========== Connect DataBase ====== 
 const dburl = process.env.MONGOURL
 
