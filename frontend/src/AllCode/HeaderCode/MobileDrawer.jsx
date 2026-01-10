@@ -15,7 +15,7 @@ export default function MobileDrawer({
     handleSignupClick,
     user,
     isLogin,
-    handleProfileOpen
+    handleLogoutClick
 }){
     return (
         <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
