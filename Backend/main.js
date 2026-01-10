@@ -15,6 +15,8 @@ import "./passportConfig.js";
 dotenv.config();
 const app = express();
 
+app.set("trust proxy", 1); // 🔥 REQUIRED FOR RENDER
+
 // Middleware
 app.use(express.json());
 app.use(cors({
@@ -22,6 +24,10 @@ app.use(cors({
   credentials: true
 }));
 
+app.options("*", cors({
+  origin: "https://visitsmart-url.onrender.com",
+  credentials: true
+}));
 
 //========== Connect DataBase ====== 
 const dburl = process.env.MONGOURL
@@ -44,23 +50,23 @@ const store = MongoStore.create({
   touchAfter: 24*3600,
 });
 
-store.on("error", ()=>{
-  console.log("Error in mongo session store", err);
-})
+store.on("error", (err) => {
+  console.error("❌ Error in Mongo session store:", err);
+});
 
 const sessionOptions = {
   store,
   secret: process.env.SESSION_KEY,
   resave: false,
   saveUninitialized: false,
-//   store: MongoStore.create({ mongoUrl: dburl}),
+  proxy: true, // 🔥 IMPORTANT for Render
   cookie: {
-    maxAge: 1000 * 60 * 60 * 24, // 1 day
+    maxAge: 1000 * 60 * 60 * 24,
     httpOnly: true,
-    secure: false,       // ❗ important for localhost (HTTP)
-    sameSite: "lax"
+    secure: true,       // ✅ REQUIRED (HTTPS)
+    sameSite: "none"    // ✅ REQUIRED (cross-site)
   }
-}
+};
 
 app.use(session(sessionOptions));
 app.use(passport.initialize());
@@ -78,7 +84,7 @@ app.use('/find/singal/review/:reviewId', findSingalReview);
 app.use('/hotel', hotelRoutes);
 
 
-const port = process.env.PORT;
+const port = process.env.PORT || 8080;
 app.listen(port, ()=>{
     console.log(`🚀 Server is running on http://localhost:${port}`);
 }) 
