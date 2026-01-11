@@ -17,7 +17,11 @@ export default function AboutCard() {
   const location = useLocation();
   const [alert, setAlert] = useState();
   const aboutSite = location.state?.aboutSite;  
-  const [siteData, setSiteData] = useState(aboutSite); // store live site data
+  const [siteData, setSiteData] = useState({
+     review: [],
+     hotel: []
+   });
+
   const [hotelData, setHotelData] = useState([]);
   const [isLoggedin, setIsLoggedin] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
@@ -43,26 +47,33 @@ export default function AboutCard() {
     currentUserID();  
   }, [location.state]);
 
-  const fetchRating = async (reviews) => {
-    if (!reviews || reviews.length === 0) {
-      setRating(0);
-      return;
-    }
+  const fetchRating = async (reviews = []) => {
+     if (!Array.isArray(reviews) || reviews.length === 0) {
+       setRating(0);
+       return;
+     }
+   
+     try {
+       const responses = await Promise.all(
+         reviews
+           .filter(r => r?._id) // 🔒 VERY IMPORTANT
+           .map(r =>
+             axios.get(`https://visitsmart-backend.onrender.com/find/singal/review/${r._id}`)
+           )
+       );
+   
+       const ratings = responses.map(res => res.data.rating || 0);
+       const avg = Math.ceil(
+         (ratings.reduce((a, b) => a + b, 0) / ratings.length) * 10
+       ) / 10;
+   
+       setRating(avg);
+     } catch (err) {
+       console.error("Error fetching ratings:", err);
+       setRating(0);
+     }
+   };
 
-    try {
-      const responses = await Promise.all(
-        reviews.map((r) => axios.get(`https://visitsmart-backend.onrender.com/find/singal/review/${r._id}`))
-      );
-
-      const ratings = responses.map((res) => res.data.rating);
-      const avg = Math.ceil((ratings.reduce((a, b) => a + b, 0) / ratings.length) * 10) / 10;
-
-      setRating(avg);
-    } catch (err) {
-      console.error("Error fetching ratings:", err);
-      setRating(0);
-    }
-  };
 
   const fetchHostel = async (hotels)=>{
     if(!hotels || hotels.length === 0){
@@ -95,22 +106,24 @@ export default function AboutCard() {
   }, []);
 
   useEffect(() => {
-    // Run whenever siteData changes
-    if (siteData?.review) {
-      fetchRating(siteData.review);
-    }
-    if(siteData?.hotel){
-      fetchHostel(siteData.hotel);
-    }
-  }, [siteData, updateHotel]);
+     if (Array.isArray(siteData?.review) && siteData.review.length > 0) {
+       fetchRating(siteData.review);
+     }
+   
+     if (Array.isArray(siteData?.hotel) && siteData.hotel.length > 0) {
+       fetchHostel(siteData.hotel);
+     }
+   }, [siteData, updateHotel]);
 
   // 🖼️ State for image slider
   // const image = [aboutSite?.image, aboutSite?.image2, aboutSite?.image3, aboutSite?.image4]// support single or multiple
   const image = Array.isArray(aboutSite?.image) ? aboutSite.image : [];
+   
+   const handleReviewClick = () => {
+     if (!aboutSite?._id) return;
+     navigate('/show/site/review/page', { state: { ID: aboutSite._id } });
+   };
 
-  const handleReviewClick =()=>{
-    navigate('/show/site/review/page', {state: {ID: aboutSite._id}});
-  }
 
   const addNewHotel =()=>{
     setIsLoad(true);
