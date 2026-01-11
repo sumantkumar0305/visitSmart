@@ -3,7 +3,7 @@ import { Star } from "@mui/icons-material"
 import { useState } from "react"
 
 export default function HotelHeader({hotel}){
-    const [review, setReview] = useState(hotel.data.review);
+    const [review, setReview] = useState(hotel.review);
     const avgRating = review.length
   ? review.reduce((sum, r) => sum + r.rating, 0) / review.length
   : 0;
