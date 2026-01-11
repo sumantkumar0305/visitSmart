@@ -10,7 +10,7 @@ export default function ({hotel}){
                 sx={{ mb: 2, color: "text.secondary" }}
             >
                 <LocationOn sx={{ fontSize: 18, mr: 0.5 }} />
-                <Typography variant="body1">{hotel.data.city}</Typography>
+                <Typography variant="body1">{hotel.city}</Typography>
             </Stack>
         </>
     )
