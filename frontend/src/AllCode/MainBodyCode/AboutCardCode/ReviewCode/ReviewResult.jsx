@@ -31,7 +31,7 @@ export default function ReviewResult({reviews, handleDelete, handleEdit}){
 
         {reviews.map((review, index) => (
             <Box
-              key={review.id} 
+              key={review._id}
               sx={{
                 mb: 3,
                 p: 2,
@@ -79,7 +79,7 @@ export default function ReviewResult({reviews, handleDelete, handleEdit}){
                 {review.comment}
               </Typography>
                 
-                {userId && (userId === review.author) && (
+                {userId && (String(userId) === String(review.author)) && (
                 <Box display="flex" gap={4}>
                   <Tooltip title="Delete">
                   <DeleteIcon  onClick={() => handleDelete(review._id)}  sx={{
