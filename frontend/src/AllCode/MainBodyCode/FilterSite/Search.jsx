@@ -20,7 +20,6 @@ export default function Search({handleOpenFilter, setSearchTerm, searchTerm}){
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            position: "relative",
           }}
         >
           {/* 🔘 Filter Button */}
