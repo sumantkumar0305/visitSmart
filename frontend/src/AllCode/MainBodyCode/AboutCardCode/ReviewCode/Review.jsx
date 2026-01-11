@@ -14,8 +14,20 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useEffect } from "react";
 import ReviewBtn from "./ReviewBtn";
 import ReviewEdit from "./ReviewEdit";
-import { fetchReviews, fetchUserProfile } from "../../middleware";
+import { fetchUserProfile } from "../../middleware";
 // import { fetchUserProfile } from "../../middleware";
+
+export const fetchReviews = async (ID) => {
+    if (!ID) return [];
+    try {
+      const response = await axios.get(`https://visitsmart-backend.onrender.com/site/review/fetch/${ID}`);
+      const reversedReviews = response.data.slice().reverse();
+      return reversedReviews; // ✅ Return the data to the component
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+      return [];
+    }
+  };
 
 const Review = () => {
   const location = useLocation();
@@ -33,12 +45,16 @@ const Review = () => {
   // const [isEdit, setIsEdit] = useState(true);
 
   const ID = location.state?.ID;
+  
   const loadReviews = async () => {
+    if (!ID) return;
+  
     try {
       const data = await fetchReviews(ID);
-      setReviews(data);
+      setReviews(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error loading reviews:", err);
+      setReviews([]);
     }
   };
 
@@ -124,8 +140,10 @@ const handleSubmit = async () => {
 };
 
 useEffect(() => {
+  if (!ID) return;
   loadReviews();
 }, [ID]);
+
 
   return (
     <>
