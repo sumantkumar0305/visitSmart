@@ -25,7 +25,7 @@ export default function HotelHeader({hotel}){
                     pr: 1, // Add padding to not touch rating
                     }}
                 >
-                    {hotel.data.name}
+                    {hotel.name}
                 </Typography>
 
             {/* === THIS IS THE REPLACED SECTION === */}
