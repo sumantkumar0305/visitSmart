@@ -43,7 +43,7 @@ export default function HotelCard({ setUpdateHotel, hotelData, currentUser }) {
   }, [nameSearch, hotelData]);
 
   const handleClickView = (hotel) => {
-    navigate("/about/hotel/details", { state: { hotelData: hotel.data, currUser: currentUser } });
+    navigate("/about/hotel/details", { state: { hotelData: hotel, currUser: currentUser } });
   };
 
   const handleDeleteHotel = async (hotel) => {
