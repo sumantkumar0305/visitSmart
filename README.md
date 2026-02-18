@@ -63,23 +63,6 @@ AWS (Hosting / Storage)
 Cloudinary (Image Upload & Management)
 
 
-📂 Project Structure
-VisitSmart/
-│
-├── frontend/          # React Frontend
-│   ├── src/
-│   ├── public/
-│   └── package.json
-│
-├── backend/           # Node.js Backend
-│   ├── models/
-│   ├── routes/
-│   ├── controllers/
-│   ├── middleware/
-│   └── server.js
-│
-└── README.md
-
 🔐 Authentication System
 
 VisitSmart uses Passport.js for authentication.
