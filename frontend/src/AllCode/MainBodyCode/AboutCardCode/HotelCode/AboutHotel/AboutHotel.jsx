@@ -13,44 +13,50 @@ import RoomRent from "./HotelBook/RoomRent";
 import HotelDes from "./HotelDes";
 import HotelLocation from "./HotelLocation";
 import HotelReview from "./HotelReview";
-import { fetchUserProfile } from "../../../middleware";
+import { BASE_URL } from "../../../middleware";
+import { useUser } from "../../../../context/UserContext";
 import AlertMsg from "../../../../AlertMsg";
 
 export default function AboutHotel() {
   const location = useLocation();
   const [imgCount, setImgCount] = useState(0);
   const [hotelData, setHotelData] = useState(null);
-  const [currentUser, setCurrentUser] = useState(null);
+  const { user: currentUser } = useUser();
   const imageArr = hotelData?.image || [];
   const [alert, setAlert] = useState({
     type: "",
     message: ""
   });
-
-  const currentUserID = async() =>{
-    const loggedIn = await fetchUserProfile();
-    setCurrentUser(loggedIn.user);  
-  }
+  // Bumped whenever a review is added/edited/deleted so the review list refreshes.
+  const [reviewRefresh, setReviewRefresh] = useState(false);
+  const triggerReviewRefresh = () => setReviewRefresh((prev) => !prev);
 
   useEffect(() => {
-    currentUserID(); 
     if (location.state?.hotelData) {
       setHotelData(location.state.hotelData);
     }
   }, [location.state]);
 
+  // Only re-runs when we navigate to a *different* hotel (or a review changes),
+  // not every time setHotelData below updates the object - that was causing an
+  // infinite fetch loop before.
+  const hotelId = location.state?.hotelData?._id;
   useEffect(() => {
-    if (!hotelData || !hotelData._id) return;  // <-- FIX
+    if (!hotelId) return;
 
     const fetchUpdateData = async () => {
-      const updatedHotel = await axios.get(
-        `https://visitsmart-backend.onrender.com/hotel/find/singal/data/${hotelData._id}`
-      );
-      setHotelData(updatedHotel.data);
+      try {
+        const updatedHotel = await axios.get(
+          `${BASE_URL}/hotel/find/singal/data/${hotelId}`
+        );
+        setHotelData(updatedHotel.data);
+      } catch (err) {
+        console.log(err);
+      }
     };
 
     fetchUpdateData();
-  }, [hotelData]);
+  }, [hotelId, reviewRefresh]);
 
 
   if (!hotelData) {
@@ -93,7 +99,7 @@ export default function AboutHotel() {
       }}
     >
       {/* --- Hotel Header --- */}
-      <HotelName hotelData={hotelData} loginData={currentUser} />
+      <HotelName hotelData={hotelData} loginData={currentUser} onReviewChange={triggerReviewRefresh} />
 
       {/* --- Main Image --- */}
       {imageArr.length > 0 && (
@@ -112,7 +118,7 @@ export default function AboutHotel() {
       </Grid>
 
       <Divider />
-      <HotelReview hotelData={hotelData} currentUser={currentUser} setAlert={setAlert}  />
+      <HotelReview hotelData={hotelData} currentUser={currentUser} setAlert={setAlert} refresh={reviewRefresh} onReviewChange={triggerReviewRefresh} />
     </Box>
     </>
   );

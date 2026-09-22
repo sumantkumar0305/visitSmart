@@ -19,6 +19,8 @@ import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import axios from 'axios';
+import { BASE_URL } from '../MainBodyCode/middleware';
+import { useUser } from '../context/UserContext';
 
 export default function UserProfile({
   anchorEl,
@@ -28,6 +30,7 @@ export default function UserProfile({
 }) {
   const open = Boolean(anchorEl);
   const [isLoad, setIsLoad] = useState(false);
+  const { refreshUser } = useUser();
   const [formData, setFormData] = useState({
     userName: user?.username,
     DOB: user?.DOB,
@@ -63,17 +66,19 @@ export default function UserProfile({
     }));
   };
 
-  const handleEditSubmit = (e) =>{
+  const handleEditSubmit = async (e) =>{
     e.preventDefault();
     setIsLoad(true)
     try{
       const userID = user._id;
-      const res = axios.put(`https://visitsmart-backend.onrender.com/user/update/profile/${userID}`, formData, { withCredentials: true })
+      await axios.put(`${BASE_URL}/user/update/profile/${userID}`, formData, { withCredentials: true });
 
-      console.log(res);
+      await refreshUser();
       closeEdit();
     }catch(err){
       console.log(err);
+    }finally{
+      setIsLoad(false);
     }
   }
 
@@ -252,7 +257,7 @@ export default function UserProfile({
           sx={{ px: 4, borderRadius: 2, textTransform: "none" }}
           onClick={handleEditSubmit}
         >
-          {isLoad ? <CircularProgress color='white' /> : "Save Changes"}
+          {isLoad ? <CircularProgress size={24} sx={{ color: "#fff" }} /> : "Save Changes"}
         </Button>
       </DialogActions>
     </Dialog>

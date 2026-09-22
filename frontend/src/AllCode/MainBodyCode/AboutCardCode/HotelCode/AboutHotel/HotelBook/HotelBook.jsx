@@ -10,6 +10,7 @@ import {
   Alert,
   Fade,
   Container,
+  CircularProgress,
 } from "@mui/material";
 import {
   Hotel as HotelIcon
@@ -140,36 +141,42 @@ export default function HotelBook() {
             if(!userDetails.name?.trim()){
                 setShow(true);
                 setMsg("Name is required");
+                setIsLoad(false);
                 return;
             }
 
             if (!userDetails.phone?.trim()) {
                 setShow(true);
                 setMsg("Contact number is required");
+                setIsLoad(false);
                 return;
             }
 
             if (userDetails.phone.length !== 10) {
                 setShow(true);
                 setMsg("Enter a valid 10-digit contact number");
+                setIsLoad(false);
                 return;
             }
 
             if(!userDetails.checkin?.trim()){
                 setShow(true);
                 setMsg("Please enter checkin date");
+                setIsLoad(false);
                 return;
             }
 
             if(!userDetails.checkout?.trim()){
                 setShow(true);
                 setMsg("Please enter checkout date");
+                setIsLoad(false);
                 return;
             }
 
             if(totalRooms <= 0){
                 setShow(true);
                 setMsg("Please select atleast one room");
+                setIsLoad(false);
                 return;
             }
 
@@ -187,6 +194,7 @@ export default function HotelBook() {
 
         } catch (err) {
             console.log(err);
+            setIsLoad(false);
         }
     };
 
@@ -217,7 +225,7 @@ export default function HotelBook() {
           </Stack>
 
           {/* --- Personal Info Section --- */}
-          <DetailsForm handleChange={handleChange} countryCode={countryCode} setCountryCode={setCountryCode} fileName={fileName} />
+          <DetailsForm handleChange={handleChange} countryCode={countryCode} setCountryCode={setCountryCode} fileName={fileName} userDetails={userDetails} />
           <Divider sx={{ my: 4 }} />
 
           {/* --- Room Selection Section --- */}
@@ -245,7 +253,7 @@ export default function HotelBook() {
                 sx={{ mt: 2, py: 1.5, fontWeight: 700, borderRadius: 2 }}
                 fullWidth
             >
-              {isLoad ? <CircularProgress color="white" /> : "Book Now"} 
+              {isLoad ? <CircularProgress size={26} sx={{ color: "#fff" }} /> : "Book Now"} 
             </Button> 
         </Paper>
       </Container>

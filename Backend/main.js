@@ -20,7 +20,7 @@ app.set("trust proxy", 1); // 🔥 REQUIRED FOR RENDER
 // Middleware
 app.use(express.json());
 app.use(cors({
-  origin: "https://visitsmart-url.onrender.com", // FRONTEND URL
+  origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
   credentials: true
 }));
 
@@ -58,8 +58,8 @@ const sessionOptions = {
   cookie: {
     maxAge: 1000 * 60 * 60 * 24,
     httpOnly: true,
-    secure: true,       // ✅ REQUIRED (HTTPS)
-    sameSite: "none"    // ✅ REQUIRED (cross-site)
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
   }
 };
 
@@ -79,7 +79,7 @@ app.use('/find/singal/review/:reviewId', findSingalReview);
 app.use('/hotel', hotelRoutes);
 
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8000;
 app.listen(port, ()=>{
     console.log(`🚀 Server is running on http://localhost:${port}`);
 }) 

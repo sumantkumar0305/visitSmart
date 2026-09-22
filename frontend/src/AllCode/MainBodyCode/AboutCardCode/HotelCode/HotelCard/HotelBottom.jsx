@@ -5,7 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 export default function HotelBottom({ currentUser, hotel, handleEditHotel, handleDeleteHotel, handleClickView }) {
   
   // Optional: Safety check to prevent crashing if user isn't logged in
-  const isOwner = currentUser?.user?._id === hotel?.data?.owner;
+  const isOwner = currentUser?.user?._id === hotel?.owner;
 
   return (
     <Stack

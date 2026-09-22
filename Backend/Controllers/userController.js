@@ -102,8 +102,18 @@ export const updateProfile = async(req, res) => {
         type: "error"
       });
     }
+
+    return res.status(200).json({
+      message: "Profile updated successfully",
+      type: "success",
+      user: updatedUser
+    });
   }catch(err){
     console.log(err);
+    return res.status(500).json({
+      message: err.message || "Profile was not updated (Server error)",
+      type: "error"
+    });
   }
 }
 

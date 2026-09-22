@@ -1,9 +1,13 @@
 // src/api/reviews.js
 import axios from "axios";
 
+// Single source of truth for the backend origin so it only needs to change
+// in one place instead of being copy/pasted into every component.
+export const BASE_URL = "http://localhost:8000";
+
 export const fetchReviews = async (ID) => {
   try {
-    const response = await axios.get(`https://visitsmart-backend.onrender.com/site/review/fetch/${ID}`);
+    const response = await axios.get(`${BASE_URL}/site/review/fetch/${ID}`);
     const reversedReviews = response.data.slice().reverse();
     return reversedReviews; // ✅ Return the data to the component
   } catch (error) {
@@ -15,7 +19,7 @@ export const fetchReviews = async (ID) => {
 
 export const fetchUserProfile = async()=>{
     try {
-    const response = await axios.get("https://visitsmart-backend.onrender.com/user/profile", {
+    const response = await axios.get(`${BASE_URL}/user/profile`, {
       withCredentials: true, // important!
     });
     return response.data; // ✅ more accurate

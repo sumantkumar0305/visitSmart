@@ -17,7 +17,7 @@ export const saveHotelData = async (req, res) => {
     const hotelData = req.body;
     const files = req.files;
 
-    const user = User.findById(hotelData.owner);
+    const user = await User.findById(hotelData.owner);
     if(!user){
       return res.status(401).json({
         message: "Login is req for add the hotel",

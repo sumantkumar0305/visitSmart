@@ -17,7 +17,7 @@ const hotelReviewSchema = new mongoose.Schema(
             },
             author: {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: "user", // ✅ must match model name exactly
+                ref: "User", // ✅ must match model name exactly
                 required: true,
             },
     },

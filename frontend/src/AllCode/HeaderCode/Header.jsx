@@ -8,7 +8,8 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import axios from 'axios';
-import { fetchUserProfile } from '../MainBodyCode/middleware';
+import { BASE_URL } from '../MainBodyCode/middleware';
+import { useUser } from '../context/UserContext';
 import UserProfile from './UserProfile';
 import MobileDrawer from './MobileDrawer';
 import DesktopNav from './DesktopNav';
@@ -16,8 +17,7 @@ import DesktopNav from './DesktopNav';
 const Header = () => {
   const navigate = useNavigate()
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
-  const [user, setUser] = useState(null);
+  const { user, isAuthenticated: isLogin, refreshUser, clearUser } = useUser();
   const [alert, setAlert] = useState({
     type: "",
     message: ""
@@ -33,22 +33,13 @@ const Header = () => {
     setAnchorEl(null);
   };
 
-  const checkUserProfile = async () => {
-    const loggedIn = await fetchUserProfile();
-    if (!loggedIn || !loggedIn.user) {
-      setIsLogin(false);
-      sessionStorage.removeItem("userId"); // optional cleanup
-      return;
-    }
-    // If valid user data is found, save it
-    sessionStorage.setItem("userId", loggedIn.user._id);
-    setIsLogin(loggedIn.isAuthenticated);
-    setUser(loggedIn.user)
-  };
-
+  // The user's session can change after navigating (e.g. right after login/logout),
+  // so re-check once per route change. This is the ONLY place that re-checks the
+  // profile - other pages read the shared context instead of fetching it again.
   const location = useLocation();
   useEffect(() => {
-    checkUserProfile();
+    refreshUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
   const toggleDrawer = (open) => () => {
@@ -74,13 +65,10 @@ const Header = () => {
 
   const handleLogoutClick =async()=>{
     try{
-      const response = await axios.post("https://visitsmart-backend.onrender.com/user/logout", {}, { withCredentials: true });
+      const response = await axios.post(`${BASE_URL}/user/logout`, {}, { withCredentials: true });
       const { type, message } = response.data;
-      sessionStorage.removeItem("userId");
       setDrawerOpen(false); // 👈 close drawer
-      setIsLogin(false);
-      setUser(null);
-      // checkUserProfile();    
+      clearUser();
       setAlert({
         type: type,
         message: message

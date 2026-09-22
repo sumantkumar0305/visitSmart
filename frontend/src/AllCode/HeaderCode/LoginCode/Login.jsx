@@ -16,7 +16,7 @@ import LoginBottom from "./LoginBottom";
 import LoginPassword from "../CommonCode/InputPassword";
 import EmailIcon from '@mui/icons-material/Email';
 import AlertMsg from "../../AlertMsg";
-import { fetchUserProfile } from "../../MainBodyCode/middleware";
+import { BASE_URL } from "../../MainBodyCode/middleware";
 
 export default function Login() {
   const location = useLocation();
@@ -43,7 +43,7 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     try{
-      const response = await axios.post("https://visitsmart-backend.onrender.com/user/login", formData, { withCredentials: true });
+      const response = await axios.post(`${BASE_URL}/user/login`, formData, { withCredentials: true });
 
       const { type, message } = response.data;
 

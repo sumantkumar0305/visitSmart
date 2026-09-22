@@ -48,7 +48,7 @@ export default function ReviewResult({reviews, handleDelete, handleEdit}){
               >
                 {/* Reviewer name */}
                 <Typography variant="subtitle1" fontWeight="bold">
-                  by Sumant
+                  by {review.author?.username || "Anonymous"}
                 </Typography>
 
                 {/* Rating value + stars */}
@@ -79,7 +79,7 @@ export default function ReviewResult({reviews, handleDelete, handleEdit}){
                 {review.comment}
               </Typography>
                 
-                {userId && (String(userId) === String(review.author)) && (
+                {userId && (String(userId) === String(review.author?._id)) && (
                 <Box display="flex" gap={4}>
                   <Tooltip title="Delete">
                   <DeleteIcon  onClick={() => handleDelete(review._id)}  sx={{

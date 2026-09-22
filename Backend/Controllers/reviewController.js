@@ -42,7 +42,7 @@ export const fetchReview = async(req, res)=>{
             return res.status(404).json({ message: "Sorry, we couldn't find the palace you're looking for.", type: "error" });
         }
         const reviewID = site.review;
-        const reviewData = await review.find({ _id: { $in: reviewID } });
+        const reviewData = await review.find({ _id: { $in: reviewID } }).populate("author");
 
         res.status(200).json(reviewData);
     }catch(err){

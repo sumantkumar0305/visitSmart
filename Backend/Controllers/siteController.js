@@ -17,7 +17,14 @@ export const findSingalData = async(req, res)=>{
         if (!mongoose.Types.ObjectId.isValid(ID)) {
             return res.status(500).json({ message: "Invalid site ID", type: "error" });
         }
-        let singalData = await siteSchema.findById(ID).populate("review").populate("hotel");
+        // Deep-populate hotels (with their reviews + review authors) in this single
+        // request so the frontend never has to make one extra call per hotel/review.
+        let singalData = await siteSchema.findById(ID)
+            .populate("review")
+            .populate({
+                path: "hotel",
+                populate: { path: "review", populate: { path: "author" } },
+            });
         return res.json(singalData);
     }catch(err){
         console.log(err);

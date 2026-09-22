@@ -12,6 +12,8 @@ import AboutHotel from "./AllCode/MainBodyCode/AboutCardCode/HotelCode/AboutHote
 import HotelBook from "./AllCode/MainBodyCode/AboutCardCode/HotelCode/AboutHotel/HotelBook/HotelBook";
 import HotelPayment from "./AllCode/MainBodyCode/AboutCardCode/HotelCode/AboutHotel/HotelBook/HotelPayment/HotelPayment";
 import {Routes, Route} from "react-router-dom";
+import PlanMyTrip from "./AllCode/HeaderCode/About/planMyTrip";
+import ThankYou from "./AllCode/HeaderCode/About/Thankyou";
 
 function App() {
   return (
@@ -29,6 +31,8 @@ function App() {
         <Route path="/about/hotel/details" element={<AboutHotel />} />
         <Route path="/book/hotel" element={<HotelBook />} />
         <Route path="/show/all/payment/to/user" element={<HotelPayment />} />
+        <Route path="/plan-my-trip" element={<PlanMyTrip />} />
+        <Route path="/thank-you" element={<ThankYou />} />
       </Routes>
       <Footer/>
     </>

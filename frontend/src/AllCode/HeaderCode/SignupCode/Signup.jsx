@@ -20,7 +20,7 @@ import SignupBtn from "../CommonCode/Button";
 import SignupBottom from "./SignupBottom";
 import AlertMsg from "../../AlertMsg"; 
 import PhoneNumber from "./PhoneNumber"; 
-import { fetchUserProfile } from "../../MainBodyCode/middleware";
+import { BASE_URL } from "../../MainBodyCode/middleware";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -53,7 +53,7 @@ export default function Signup() {
     setLoading(true);
       try{
         console.log(formData);
-        const response = await axios.post("https://visitsmart-backend.onrender.com/user/signup", formData, { withCredentials: true });
+        const response = await axios.post(`${BASE_URL}/user/signup`, formData, { withCredentials: true });
 
         const { type, message } = response.data;
 

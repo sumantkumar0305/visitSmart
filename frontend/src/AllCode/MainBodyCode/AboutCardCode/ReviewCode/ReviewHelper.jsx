@@ -18,7 +18,7 @@ export default function Comment({ handleRatingChange, handleCommentChange, comme
             size="large"
             precision={1}
             icon={<StarIcon fontSize="inherit" htmlColor="#e8eb34" />}
-            emptyIcon={<StarIcon fontSize="inherit" htmlColor="white" />}
+            emptyIcon={<StarIcon fontSize="inherit" />}
           />
         </Box>
 

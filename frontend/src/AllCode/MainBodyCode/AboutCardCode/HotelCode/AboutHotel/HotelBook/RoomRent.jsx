@@ -99,7 +99,7 @@ export default function RoomRent({ hotelData, loginData }) {
             },
           }}
         >
-          {isLoad ? <CircularProgress color="white" /> : "Book now"}
+          {isLoad ? <CircularProgress size={24} sx={{ color: "#fff" }} /> : "Book now"}
         </Button>
       </Box>
 

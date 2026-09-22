@@ -9,7 +9,8 @@ import ImageSlider from "./AboutCard/ImageSlider";
 import AddHotelBtn from "./AboutCard/AddHotelBtn";
 import HotelCard from "./HotelCode/HotelCard";
 import AlertMsg from "../../AlertMsg";
-import { fetchUserProfile } from "../middleware";
+import { BASE_URL } from "../middleware";
+import { useUser } from "../../context/UserContext";
    
 export default function AboutCard() {
   const [rating, setRating] = useState(0);
@@ -22,80 +23,30 @@ export default function AboutCard() {
      hotel: []
    });
 
-  const [hotelData, setHotelData] = useState([]);
-  const [isLoggedin, setIsLoggedin] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+  // Shared across the app - no separate profile fetch needed here anymore.
+  const { user, isAuthenticated: isLoggedin } = useUser();
   const [updateHotel, setUpdateHotel] = useState(false);
   const [isLoad, setIsLoad] = useState(false);
-  
+
+  // ✅ One request gets the site, its reviews (with ratings) AND every hotel
+  // (with each hotel's reviews/authors) already populated by the backend -
+  // no more per-review / per-hotel follow-up calls.
   const fetchSiteData = async (id) => {
     try {
-      const res = await axios.get(`https://visitsmart-backend.onrender.com/site/data/find/by/${id}`);
+      const res = await axios.get(`${BASE_URL}/site/data/find/by/${id}`);
       setSiteData(res.data);
     } catch (err) {
       console.error("Error fetching site data:", err);
     }
   };
 
-  const currentUserID = async() =>{
-    const loggedIn = await fetchUserProfile();
-    setIsLoggedin(loggedIn.isAuthenticated)
-    setCurrentUser(loggedIn);  
-  }
-
-  useEffect(()=>{
-    currentUserID();  
-  }, [location.state]);
-
-  const fetchRating = async (reviews = []) => {
-     if (!Array.isArray(reviews) || reviews.length === 0) {
-       setRating(0);
-       return;
-     }
-   
-     try {
-       const responses = await Promise.all(
-         reviews
-           .filter(r => r?._id) // 🔒 VERY IMPORTANT
-           .map(r =>
-             axios.get(`https://visitsmart-backend.onrender.com/find/singal/review/${r._id}`)
-           )
-       );
-   
-       const ratings = responses.map(res => res.data.rating || 0);
-       const avg = Math.ceil(
-         (ratings.reduce((a, b) => a + b, 0) / ratings.length) * 10
-       ) / 10;
-   
-       setRating(avg);
-     } catch (err) {
-       console.error("Error fetching ratings:", err);
-       setRating(0);
-     }
-   };
-
-
-  const fetchHostel = async (hotels)=>{
-    if(!hotels || hotels.length === 0){
-      return;  
-    }
-
-    try{
-      const responses = await Promise.all(
-        hotels.map((h)=> axios.get(`https://visitsmart-backend.onrender.com/hotel/find/singal/data/${h._id}`))
-      );
-
-      setHotelData(responses.map(res => res.data));
-    }catch(err){
-      console.error("Error fetching hotels:", err);
-    }
-  }
-
   useEffect(() => {
     if(aboutSite?._id){
       fetchSiteData(aboutSite._id);
     }
-  }, [aboutSite]); 
+    // Re-fetch whenever a hotel is added/deleted so the list stays in sync -
+    // still just ONE request, not one per hotel.
+  }, [aboutSite, updateHotel]);
 
   useEffect(() => {
     const alertFromStorage = sessionStorage.getItem("hotelAlert");
@@ -105,18 +56,22 @@ export default function AboutCard() {
     }
   }, []);
 
+  // Ratings are computed locally from the already-fetched reviews - no network call.
   useEffect(() => {
-     if (Array.isArray(siteData?.review) && siteData.review.length > 0) {
-       fetchRating(siteData.review);
-     }
-   
-     if (Array.isArray(siteData?.hotel) && siteData.hotel.length > 0) {
-       fetchHostel(siteData.hotel);
-     }
-   }, [siteData, updateHotel]);
+    const reviews = siteData?.review;
+    if (!Array.isArray(reviews) || reviews.length === 0) {
+      setRating(0);
+      return;
+    }
+    const avg = Math.ceil(
+      (reviews.reduce((sum, r) => sum + (r?.rating || 0), 0) / reviews.length) * 10
+    ) / 10;
+    setRating(avg);
+  }, [siteData]);
+
+  const hotelData = Array.isArray(siteData?.hotel) ? siteData.hotel : [];
 
   // 🖼️ State for image slider
-  // const image = [aboutSite?.image, aboutSite?.image2, aboutSite?.image3, aboutSite?.image4]// support single or multiple
   const image = Array.isArray(aboutSite?.image) ? aboutSite.image : [];
    
    const handleReviewClick = () => {
@@ -127,7 +82,7 @@ export default function AboutCard() {
 
   const addNewHotel =()=>{
     setIsLoad(true);
-    navigate('/add/hotel/form', {state: {ID: aboutSite._id, owner: currentUser.user._id}});
+    navigate('/add/hotel/form', {state: {ID: aboutSite._id, owner: user?._id}});
   }
 
   return (
@@ -177,7 +132,7 @@ export default function AboutCard() {
         <HotelCard 
         setUpdateHotel={setUpdateHotel} 
         hotelData={hotelData} 
-        currentUser={currentUser} 
+        currentUser={{ user, isAuthenticated: isLoggedin }} 
         />
           {/* ➕ Add New Hotel Button */}
           {isLoggedin && (

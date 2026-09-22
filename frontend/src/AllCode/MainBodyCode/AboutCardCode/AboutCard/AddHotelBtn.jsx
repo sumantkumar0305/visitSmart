@@ -25,7 +25,7 @@ export default function AddHotelBtn({isLoad, addNewHotel}){
                 },
             }}
             >
-                {isLoad ? <CircularProgress color="white" /> : "Add Hotel"} 
+                {isLoad ? <CircularProgress size={24} sx={{ color: "#fff" }} /> : "Add Hotel"} 
             </Button>
         </Box>
     )

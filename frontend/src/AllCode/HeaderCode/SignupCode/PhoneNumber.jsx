@@ -17,6 +17,7 @@ export default function PhoneNumber({handleChange, formData}){
             placeholder="9876543210"
             type="tel"
             fullWidth
+            value={formData["phone"] || ""}
             onChange={handleChange}
             InputProps={{
                 startAdornment: (

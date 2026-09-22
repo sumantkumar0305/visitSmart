@@ -15,10 +15,12 @@ import QRTicket from "./QRTicket";
 export default function HotelPayment() {
     const { state } = useLocation();
     const navigate = useNavigate();
-    if (!state) return null;
 
     const [openTicket, setOpenTicket] = useState(false);
     const [bookingId, setBookingId] = useState("");
+
+    if (!state) return null;
+
     const {
         userDetails,
         roomRent,

@@ -5,7 +5,7 @@ import ReviewForm from "./ReviewForm";
 import { useState } from "react";
 import AlertMsg from "../../../../AlertMsg";
 
-export default function HotelName({ hotelData, loginData }) {
+export default function HotelName({ hotelData, loginData, onReviewChange }) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [alert, setAlert] = useState({
@@ -93,6 +93,7 @@ export default function HotelName({ hotelData, loginData }) {
             hotelId={hotelData?._id}
             authorId={loginData?._id}
             setAlert={setAlert}
+            onSuccess={onReviewChange}
           />
         </DialogContent>
       </Dialog>

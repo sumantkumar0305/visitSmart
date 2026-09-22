@@ -16,6 +16,7 @@ import HotelHeader from "./HotelCard/HotelHeader";
 import HotelLocation from "./HotelCard/HotelLocation";
 import HotelBottom from "./HotelCard/HotelBottom";
 import AlertMsg from "../../../AlertMsg";
+import { BASE_URL } from "../../middleware";
 
 export default function HotelCard({ setUpdateHotel, hotelData, currentUser }) {
   const navigate = useNavigate();
@@ -36,8 +37,8 @@ export default function HotelCard({ setUpdateHotel, hotelData, currentUser }) {
 
     const filteredData = hotelData.filter(
       (hotel) =>
-        hotel?.data?.name &&
-        hotel.data.name.toLowerCase().includes(search)
+        hotel?.name &&
+        hotel.name.toLowerCase().includes(search)
     );
     setData(filteredData);
   }, [nameSearch, hotelData]);
@@ -48,9 +49,9 @@ export default function HotelCard({ setUpdateHotel, hotelData, currentUser }) {
 
   const handleDeleteHotel = async (hotel) => {
     try {
-      const hotelId = hotel.data._id;
+      const hotelId = hotel._id;
 
-      const response = await axios.delete(`https://visitsmart-backend.onrender.com/hotel/data/remove/${hotelId}`, { withCredentials: true });
+      const response = await axios.delete(`${BASE_URL}/hotel/data/remove/${hotelId}`, { withCredentials: true });
 
       const { type, message } = response.data;
 

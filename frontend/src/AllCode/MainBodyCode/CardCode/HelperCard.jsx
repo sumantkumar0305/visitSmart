@@ -3,6 +3,7 @@ import { Box, Typography, CardContent, CardMedia, Card } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../../Loader';
 import axios from 'axios';
+import { BASE_URL } from '../middleware';
 
 export default function HelperCard({ data }) {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ export default function HelperCard({ data }) {
   const handleClick = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`https://visitsmart-backend.onrender.com/site/data/find/by/${ID}`);
+      const response = await axios.get(`${BASE_URL}/site/data/find/by/${ID}`);
       const aboutSiteDate = response.data;
 
       setTimeout(() => {

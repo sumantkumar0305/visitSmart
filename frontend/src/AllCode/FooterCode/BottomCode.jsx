@@ -22,7 +22,7 @@ export default function BottomCode() {
         // Optional: Make font slightly smaller on very small phones if needed
         sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
       >
-        &copy; {new Date().getFullYear()} Janshayak. All rights reserved.
+        &copy; {new Date().getFullYear()} Visits Mart. All rights reserved.
       </Typography>
     </Box>
   );

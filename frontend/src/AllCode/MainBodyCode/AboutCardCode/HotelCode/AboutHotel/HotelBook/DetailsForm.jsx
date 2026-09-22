@@ -13,7 +13,7 @@ import { Person as PersonIcon,
     CloudUpload as CloudUploadIcon,
     Badge as BadgeIcon } from "@mui/icons-material";
 
-export default function DetailsForm({handleChange, countryCode, setCountryCode, fileName}){
+export default function DetailsForm({handleChange, countryCode, setCountryCode, fileName, userDetails}){
     return (
         <Grid container spacing={3}>
             {/* --- Personal Info Section --- */}
@@ -31,6 +31,7 @@ export default function DetailsForm({handleChange, countryCode, setCountryCode, 
                 placeholder="John Doe"
                 fullWidth
                 variant="outlined"
+                value={userDetails?.name || ""}
                 onChange={handleChange}
                 InputProps={{
                   startAdornment: (
@@ -50,6 +51,7 @@ export default function DetailsForm({handleChange, countryCode, setCountryCode, 
                 placeholder="9876543210"
                 type="tel"
                 fullWidth
+                value={userDetails?.phone || ""}
                 onChange={handleChange}
                 InputProps={{
                   startAdornment: (
@@ -80,6 +82,7 @@ export default function DetailsForm({handleChange, countryCode, setCountryCode, 
                 type="date"
                 name="checkin"
                 fullWidth
+                value={userDetails?.checkin || ""}
                 onChange={handleChange}
                 InputLabelProps={{ shrink: true }}
                 InputProps={{
@@ -93,6 +96,7 @@ export default function DetailsForm({handleChange, countryCode, setCountryCode, 
                 type="date"
                 name="checkout"
                 fullWidth
+                value={userDetails?.checkout || ""}
                 onChange={handleChange}
                 InputLabelProps={{ shrink: true }}
                 InputProps={{

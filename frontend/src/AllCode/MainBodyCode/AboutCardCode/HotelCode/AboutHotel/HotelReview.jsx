@@ -14,14 +14,14 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ReviewEditForm from "./ReviewEditForm";
 import axios from "axios";
+import { BASE_URL } from "../../../middleware";
 
-export default function HotelReview({ hotelData, currentUser, setAlert}) {
+export default function HotelReview({ hotelData, currentUser, setAlert, refresh, onReviewChange }) {
   const [reviews, setReviewList] = useState(hotelData.review);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [open, setOpen] = useState(false);
   const [reviewIds, setReviewIds] = useState(null);
-  const [refresh, setRefresh] = useState(false);
   
   const showReviewPage = (rate, com, ID) => {
     setComment(com);
@@ -37,7 +37,7 @@ export default function HotelReview({ hotelData, currentUser, setAlert}) {
   const updatedHotel = async()=>{
     try{
       const updatedHotel = await axios.get(
-        `https://visitsmart-backend.onrender.com/hotel/find/singal/data/${hotelData._id}`
+        `${BASE_URL}/hotel/find/singal/data/${hotelData._id}`
       );
 
       setReviewList(updatedHotel.data.review);
@@ -48,6 +48,7 @@ export default function HotelReview({ hotelData, currentUser, setAlert}) {
 
   useEffect(() => {
     updatedHotel();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hotelData._id, refresh]);
 
   
@@ -58,12 +59,12 @@ export default function HotelReview({ hotelData, currentUser, setAlert}) {
 
   const handleDelete = async(reviewId)=>{
     try{
-      const res = await axios.delete(`https://visitsmart-backend.onrender.com/hotel/review/delete/${reviewId}/${hotelData._id}`);
+      const res = await axios.delete(`${BASE_URL}/hotel/review/delete/${reviewId}/${hotelData._id}`);
       const { type, message } = res.data;
       setAlert({ type, message });
 
       setReviewList(prev => prev.filter(r => r._id !== reviewId));
-      setRefresh(prev => !prev);
+      onReviewChange?.();
     }catch(err){
       console.log(err);
       setAlert({
@@ -76,14 +77,14 @@ export default function HotelReview({ hotelData, currentUser, setAlert}) {
   const handleEdit = async() =>{
     try{
       const res = await axios.put(
-        `https://visitsmart-backend.onrender.com/hotel/review/edit/${reviewIds}/${hotelData._id}`,
+        `${BASE_URL}/hotel/review/edit/${reviewIds}/${hotelData._id}`,
         { rating, comment }
       );
 
       closeReviewPage();
       const { type, message } = res.data;
       setAlert({ type, message });
-      setRefresh(prev => !prev);
+      onReviewChange?.();
     }catch(err){
       console.log(err);
       setAlert({

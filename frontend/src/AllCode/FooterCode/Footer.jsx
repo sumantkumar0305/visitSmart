@@ -52,7 +52,7 @@ const Footer = () => {
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               <LinkCode link="/" text="Home" />
-              <LinkCode link="/about" text="About Us" />
+              <LinkCode link="/about/web/page" text="About Us" />
               <LinkCode link="/login/form" text="Login" />
               <LinkCode link="https://www.freeprivacypolicy.com/privacy-policy/" text="Privacy Policy" />
             </Box>
@@ -80,7 +80,7 @@ const Footer = () => {
               <IconCode href="https://facebook.com" Icon={FacebookIcon} />
               <IconCode href="https://twitter.com" Icon={TwitterIcon} />
               <IconCode href="https://instagram.com" Icon={InstagramIcon} />
-              <IconCode href="https://linkedin.com" Icon={LinkedInIcon} />
+              <IconCode href="https://www.linkedin.com/in/sumant-kumar-dev/" Icon={LinkedInIcon} />
             </Box>
           </Grid>
         </Grid>

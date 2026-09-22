@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Box, Typography, Rating, TextField, Button } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 import axios from 'axios';
+import { BASE_URL } from '../../middleware';
 
 export default function ReviewEdit({ editReview, setIsEdit, fetchReviews }) {
   const [rating, setRating] = useState(0);
@@ -34,7 +35,7 @@ export default function ReviewEdit({ editReview, setIsEdit, fetchReviews }) {
 
         console.log(reviewMsg);
 
-        const response = await axios.put(`https://visitsmart-backend.onrender.com/site/review/edit/${ID}`, reviewMsg);
+        const response = await axios.put(`${BASE_URL}/site/review/edit/${ID}`, reviewMsg);
         setIsEdit(false);
         fetchReviews();
     }catch(err){
@@ -49,7 +50,7 @@ export default function ReviewEdit({ editReview, setIsEdit, fetchReviews }) {
         maxWidth: { xs: '90%', sm: 500 },
         margin: 'auto',
         mt: { xs: 2, sm: 4 },
-        backgroundColor: '#c026d3',
+        backgroundColor: '#0d47a1',
         color: 'white',
         p: { xs: 2, sm: 4 },
         borderRadius: 4,
@@ -102,7 +103,7 @@ export default function ReviewEdit({ editReview, setIsEdit, fetchReviews }) {
           }
           sx={{
             '& .MuiRating-iconFilled': {
-              color: 'red',
+              color: '#ffc107',
             },
             '& .MuiRating-iconEmpty': {
               color: 'rgba(255,255,255,0.7)',
@@ -135,7 +136,7 @@ export default function ReviewEdit({ editReview, setIsEdit, fetchReviews }) {
           sx: {
             color: '#4a4a4a',
             '&.Mui-focused': {
-              color: '#c026d3',
+              color: '#0d47a1',
             },
           },
         }}

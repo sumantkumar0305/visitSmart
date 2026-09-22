@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -11,16 +11,15 @@ import AlertMsg from '../../../AlertMsg';
 import ReviewResult from "./ReviewResult";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
-import { useEffect } from "react";
 import ReviewBtn from "./ReviewBtn";
 import ReviewEdit from "./ReviewEdit";
-import { fetchUserProfile } from "../../middleware";
-// import { fetchUserProfile } from "../../middleware";
+import { BASE_URL } from "../../middleware";
+import { useUser } from "../../../context/UserContext";
 
 export const fetchReviews = async (ID) => {
     if (!ID) return [];
     try {
-      const response = await axios.get(`https://visitsmart-backend.onrender.com/site/review/fetch/${ID}`);
+      const response = await axios.get(`${BASE_URL}/site/review/fetch/${ID}`);
       const reversedReviews = response.data.slice().reverse();
       return reversedReviews; // ✅ Return the data to the component
     } catch (error) {
@@ -32,6 +31,7 @@ export const fetchReviews = async (ID) => {
 const Review = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useUser(); // already loaded once by the shared context - no extra fetch here
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [reviews, setReviews] = useState([]); // 🔹 Array to store multiple reviews
@@ -42,7 +42,6 @@ const Review = () => {
     type: "",  
     message: ""
   });
-  // const [isEdit, setIsEdit] = useState(true);
 
   const ID = location.state?.ID;
   
@@ -68,7 +67,7 @@ const Review = () => {
 
   const handleDelete =async(reviewid)=> {
     try{
-      const response = await axios.post(`https://visitsmart-backend.onrender.com/site/review/delete/${reviewid}`);
+      const response = await axios.post(`${BASE_URL}/site/review/delete/${reviewid}`);
       const { type, message } = response.data;
       setAlert({ type, message });
       loadReviews();
@@ -99,8 +98,7 @@ const handleSubmit = async () => {
   const newReview = { rating, comment };
 
   try {
-    const loggedIn = await fetchUserProfile();
-    const authorId = loggedIn?.user?._id;
+    const authorId = user?._id;
 
     if (!authorId) {
       setAlert({
@@ -116,7 +114,7 @@ const handleSubmit = async () => {
       return;
     }
 
-    const response = await axios.post(`https://visitsmart-backend.onrender.com/site/review/save/${ID}/${authorId}`,newReview);
+    const response = await axios.post(`${BASE_URL}/site/review/save/${ID}/${authorId}`,newReview);
     const { type, message } = response.data;
     setAlert({ type, message });
 
@@ -157,7 +155,8 @@ useEffect(() => {
         sx={{
           padding: { xs: 3, sm: 4 },
           borderRadius: 3,
-          background: "#d534eb",
+          backgroundColor: "#ffffff",
+          borderTop: "6px solid #0d47a1",
           boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
         }}
       >
@@ -167,7 +166,7 @@ useEffect(() => {
           textAlign="center"
           fontWeight="bold"
           sx={{
-            color: "#333",
+            color: "#0d47a1",
             fontSize: { xs: "1.8rem", sm: "2.2rem" },
           }}
         >
@@ -184,7 +183,7 @@ useEffect(() => {
 
         {loading ? (
           <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-            <CircularProgress size={28} color="#f5ce42" />
+            <CircularProgress size={28} sx={{ color: "#ffc107" }} />
           </Box>
         ):(
         <ReviewBtn handleSubmit={handleSubmit} />

@@ -12,6 +12,7 @@ import InputField from "./HotelAddForm/InputField";
 import ImageUpload from "./HotelAddForm/ImageUpload";
 import AlertMsg from "../../../AlertMsg";
 import CircularProgress from "@mui/material/CircularProgress";
+import { BASE_URL } from "../../middleware";
 
 export default function HotelAddForm() {
     const location = useLocation();
@@ -62,7 +63,7 @@ export default function HotelAddForm() {
     formData.append("images", image); // "images" must match backend field name
     });
 
-    const response = await axios.post(`https://visitsmart-backend.onrender.com/hotel/data/save/${ID}`, formData, {
+    const response = await axios.post(`${BASE_URL}/hotel/data/save/${ID}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
     });  
 
