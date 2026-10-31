@@ -165,7 +165,7 @@ npm install
 
 ### Configure the backend
 
-Copy `Backend/.env.example` to `Backend/.env` and set your values:
+Copy `Backend/.env.example` to `Backend/.env` and replace every example value with your real credentials. Do not run the app with the placeholder values:
 
 ```env
 MONGOURL=your_mongodb_connection_string
