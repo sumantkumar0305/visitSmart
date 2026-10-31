@@ -1,10 +1,9 @@
 import mongoose from "mongoose";
 import siteSchema from "../Models/SiteData.js";
 import hotel from "../Models/hotel.js";
-import User from "../Models/User.js";
 import hotelReview from "../Models/hotelReview.js";
 
-import { v2 as cloudinary } from "cloudinary";
+import { cloudinary } from "../CloudConfig.js";
 import streamifier from "streamifier";
 
 export const saveHotelData = async (req, res) => {
@@ -17,17 +16,17 @@ export const saveHotelData = async (req, res) => {
     const hotelData = req.body;
     const files = req.files;
 
-    const user = await User.findById(hotelData.owner);
-    if(!user){
-      return res.status(401).json({
-        message: "Login is req for add the hotel",
+    if (!files || !Array.isArray(files) || files.length === 0) {
+      return res.status(400).json({
+        message: "No files uploaded",
         type: "error"
       });
     }
 
-    if (!files || !Array.isArray(files) || files.length === 0) {
-      return res.status(400).json({
-        message: "No files uploaded",
+    const site = await siteSchema.findById(siteId);
+    if (!site) {
+      return res.status(404).json({
+        message: "Sorry, we couldn't find the place you're looking for.",
         type: "error"
       });
     }
@@ -57,17 +56,12 @@ export const saveHotelData = async (req, res) => {
       singleAC_Price: hotelData.singleAC_Price,
       doubleNonAC_Price: hotelData.doubleNonAC_Price,
       singleNonAC_Price: hotelData.singleNonAC_Price,
-      owner: hotelData.owner,
+      owner: req.user._id,
       city: hotelData.city,
       pincode: hotelData.pincode,
     });
     await newHotel.save();
     
-    const site = await siteSchema.findById(siteId);
-    if (!site) {
-      return res.status(404).json({ message: "Sorry, we couldn't find the palace you're looking for.", type: "error" });
-    }
-
     site.hotel.push(newHotel._id);
     await site.save();
     // console.log("Hotel add: ", req.user);
@@ -91,13 +85,23 @@ export const deleteHotelData = async(req, res)=>{
 
     const hotelData = await hotel.findById(hotelID);
     if (!hotelData){
-      return res.status(400).json({ message: "This hotel is not exist", type: "error" });
+      return res.status(404).json({ message: "This hotel does not exist", type: "error" });
+    }
+    if (hotelData.owner?.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        message: "You can only delete hotels you own",
+        type: "error"
+      });
     }
 
     for(const reviewID of hotelData.review){
       await hotelReview.findByIdAndDelete(reviewID);
     }
     await hotel.findByIdAndDelete(hotelID);
+    await siteSchema.updateOne(
+      { hotel: hotelID },
+      { $pull: { hotel: hotelID } }
+    );
 
     res.status(201).json({ message: "Your hotel data delete successfully", type: "success" });
   }catch(err){

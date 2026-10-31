@@ -35,7 +35,11 @@ export default function ReviewEdit({ editReview, setIsEdit, fetchReviews }) {
 
         console.log(reviewMsg);
 
-        const response = await axios.put(`${BASE_URL}/site/review/edit/${ID}`, reviewMsg);
+        const response = await axios.put(
+          `${BASE_URL}/site/review/edit/${ID}`,
+          reviewMsg,
+          { withCredentials: true }
+        );
         setIsEdit(false);
         fetchReviews();
     }catch(err){

@@ -67,7 +67,7 @@ const Review = () => {
 
   const handleDelete =async(reviewid)=> {
     try{
-      const response = await axios.post(`${BASE_URL}/site/review/delete/${reviewid}`);
+      const response = await axios.post(`${BASE_URL}/site/review/delete/${reviewid}`, {}, { withCredentials: true });
       const { type, message } = response.data;
       setAlert({ type, message });
       loadReviews();
@@ -114,7 +114,11 @@ const handleSubmit = async () => {
       return;
     }
 
-    const response = await axios.post(`${BASE_URL}/site/review/save/${ID}/${authorId}`,newReview);
+    const response = await axios.post(
+      `${BASE_URL}/site/review/save/${ID}/${authorId}`,
+      newReview,
+      { withCredentials: true }
+    );
     const { type, message } = response.data;
     setAlert({ type, message });
 

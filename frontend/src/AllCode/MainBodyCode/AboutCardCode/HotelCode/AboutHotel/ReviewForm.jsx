@@ -21,7 +21,11 @@ export default function ReviewForm({ onClose,
     try{
       const newReview = {rating, comment};
 
-      const res = await axios.post(`${BASE_URL}/hotel/review/save/${hotelId}/${authorId}`, newReview);
+      const res = await axios.post(
+        `${BASE_URL}/hotel/review/save/${hotelId}/${authorId}`,
+        newReview,
+        { withCredentials: true }
+      );
     
       const { type, message } = res.data;
       setAlert({ type, message });

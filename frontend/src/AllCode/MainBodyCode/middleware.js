@@ -1,9 +1,9 @@
 // src/api/reviews.js
 import axios from "axios";
 
-// Single source of truth for the backend origin so it only needs to change
-// in one place instead of being copy/pasted into every component.
-export const BASE_URL = "http://localhost:8000";
+export const BASE_URL = (
+  import.meta.env.VITE_API_URL || "http://localhost:8000"
+).replace(/\/+$/, "");
 
 export const fetchReviews = async (ID) => {
   try {

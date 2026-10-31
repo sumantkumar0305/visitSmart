@@ -59,7 +59,10 @@ export default function HotelReview({ hotelData, currentUser, setAlert, refresh,
 
   const handleDelete = async(reviewId)=>{
     try{
-      const res = await axios.delete(`${BASE_URL}/hotel/review/delete/${reviewId}/${hotelData._id}`);
+      const res = await axios.delete(
+        `${BASE_URL}/hotel/review/delete/${reviewId}/${hotelData._id}`,
+        { withCredentials: true }
+      );
       const { type, message } = res.data;
       setAlert({ type, message });
 
@@ -78,7 +81,8 @@ export default function HotelReview({ hotelData, currentUser, setAlert, refresh,
     try{
       const res = await axios.put(
         `${BASE_URL}/hotel/review/edit/${reviewIds}/${hotelData._id}`,
-        { rating, comment }
+        { rating, comment },
+        { withCredentials: true }
       );
 
       closeReviewPage();

@@ -143,7 +143,7 @@ VisitSmart uses Passport Local authentication with Express Session and MongoDB-b
 3. Express creates a server-side session after successful authentication.
 4. Connect Mongo stores the session in MongoDB.
 5. The browser sends the session cookie with protected requests.
-6. The backend checks the current user before allowing protected review, profile, hotel, or trip-request actions.
+6. The backend checks the current session and record ownership before allowing profile, review, or hotel mutations.
 
 ## Installation and setup
 
@@ -165,7 +165,7 @@ npm install
 
 ### Configure the backend
 
-Create `Backend/.env`:
+Copy `Backend/.env.example` to `Backend/.env` and set your values:
 
 ```env
 MONGOURL=your_mongodb_connection_string
@@ -174,7 +174,16 @@ PORT=8000
 CLOUD_NAME=your_cloudinary_cloud_name
 CLOUD_API_KEY=your_cloudinary_api_key
 CLOUD_API_SECRET=your_cloudinary_api_secret
+FRONTEND_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 NODE_ENV=development
+```
+
+Generate a long, unique `SESSION_KEY` (at least 32 characters in production). Never commit `.env` files or use the example values in a deployed service.
+
+Copy `frontend/.env.example` to `frontend/.env`:
+
+```env
+VITE_API_URL=http://localhost:8000
 ```
 
 ### Seed sample natural places
@@ -188,7 +197,7 @@ npm run seed
 
 ```bash
 cd Backend
-node main.js
+npm start
 ```
 
 ### Run the frontend
@@ -204,7 +213,7 @@ The frontend normally runs at `http://localhost:5173` and the backend at `http:/
 
 ## Deployment
 
-The frontend and backend can be deployed as separate services:
+The checked-in [render.yaml](./render.yaml) deploys the frontend and API as separate Render services. It configures the SPA rewrite and `/healthz` health check. In Render, create a Blueprint from this repository and provide the secret values when prompted.
 
 | Service | Recommended platform |
 | --- | --- |
@@ -213,7 +222,32 @@ The frontend and backend can be deployed as separate services:
 | Database | MongoDB Atlas |
 | Images | Cloudinary |
 
-Before deployment, update the frontend API URL, add the production frontend URL to the backend CORS configuration, set production environment variables, and enable HTTPS for secure session cookies.
+### Required hosting environment variables
+
+Configure these on the Render API service:
+
+| Variable | Value |
+| --- | --- |
+| `MONGOURL` | MongoDB Atlas connection URI. Allowlist Render's outbound IPs as required, or use Atlas network access rules appropriate for your deployment. |
+| `SESSION_KEY` | A unique random secret of at least 32 characters. |
+| `CLOUD_NAME` | Cloudinary cloud name. |
+| `CLOUD_API_KEY` | Cloudinary API key. |
+| `CLOUD_API_SECRET` | Cloudinary API secret. |
+| `FRONTEND_ORIGINS` | Comma-separated exact browser origins, with no trailing slash; e.g. `https://visitsmart.onrender.com`. |
+| `NODE_ENV` | `production` (set by the Blueprint). |
+
+Configure `VITE_API_URL` on the Render frontend static site to the API's HTTPS origin (`https://visitsmart-api.onrender.com`). Vite embeds this value at build time, so redeploy the frontend after changing it. Render supplies `PORT` to the backend; do not set a fixed port in the dashboard. Authenticated mutations require the browser's exact frontend origin to be included in `FRONTEND_ORIGINS`.
+
+For a manual deployment, create a Node web service with root directory `Backend`, build command `npm ci`, start command `npm start`, and health-check path `/healthz`. Create a static site with root directory `frontend`, build command `npm ci && npm run build`, publish directory `dist`, and a rewrite from `/*` to `/index.html`. Set the environment variables above and allow the deployed frontend origin in `FRONTEND_ORIGINS`.
+
+### Post-deployment smoke checks
+
+1. Open `https://visitsmart-api.onrender.com/healthz`; expect HTTP 200 and JSON with `"status":"ok"` and `"database":"connected"`.
+2. Open the frontend HTTPS URL and confirm that destinations load without browser console CORS/network errors.
+3. Sign up or log in, reload the page, and confirm the session remains active; then log out and confirm the session clears.
+4. Open a destination, load its reviews, and check a hotel detail page.
+5. If testing hotel uploads, submit a supported image and confirm it is available from the returned Cloudinary URL.
+6. In Render logs, check for the startup message indicating MongoDB is connected and investigate any 5xx responses or session-store errors.
 
 ## Responsible nature tourism
 

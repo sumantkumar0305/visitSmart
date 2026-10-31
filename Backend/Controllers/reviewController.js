@@ -5,21 +5,20 @@ import mongoose from "mongoose";
 
 export const saveReview = async(req,res)=>{
     try{
-        const {ID, authorId} = req.params;
+        const {ID} = req.params;
         const {rating, comment} = req.body;  
 
         if (!mongoose.Types.ObjectId.isValid(ID)) {
-            return res.status(500).json({ message: "Invalid site ID", type: "error" });
+            return res.status(400).json({ message: "Invalid site ID", type: "error" });
         }   
 
-        const newReview = new review({ rating, comment, author: authorId });
-        await newReview.save();
-        
         const site = await siteSchema.findById(ID);
         if (!site) {
             return res.status(404).json({ message: "Sorry, we couldn't find the palace you're looking for.", type: "error" });
         }
 
+        const newReview = new review({ rating, comment, author: req.user._id });
+        await newReview.save();
         site.review.push(newReview._id);
         await site.save();
 
@@ -55,9 +54,16 @@ export const deleteReview = async(req,res)=>{
     try{
         let reviewId = req.params.reviewId;
         if (!mongoose.Types.ObjectId.isValid(reviewId)) {
-            return res.status(500).json({ message: "Invalid site ID", type: "error" });
+            return res.status(400).json({ message: "Invalid review ID", type: "error" });
         }
-        await review.findByIdAndDelete(reviewId);
+        const reviewToDelete = await review.findById(reviewId);
+        if (!reviewToDelete) {
+            return res.status(404).json({ message: "Review not found", type: "error" });
+        }
+        if (reviewToDelete.author?.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: "You can only delete your own reviews", type: "error" });
+        }
+        await reviewToDelete.deleteOne();
 
         await siteSchema.updateOne(
             { review: reviewId },
@@ -75,7 +81,7 @@ export const editReview = async(req, res)=>{
     try{
         let reviewId = req.params.reviewId;
         if (!mongoose.Types.ObjectId.isValid(reviewId)) {
-            return res.status(500).json({ message: "Invalid site ID", type: "error" });
+            return res.status(400).json({ message: "Invalid review ID", type: "error" });
         }
         const {rating, comment} = req.body;
 
@@ -83,17 +89,22 @@ export const editReview = async(req, res)=>{
             return res.status(400).json({ message: 'Rating and comment are required.', type: "error" });
         }
         
-        const updatedReview = await review.findByIdAndUpdate(
-            reviewId,
-            { rating, comment },
-        );
-
-        if (!updatedReview) {
-        return res.status(404).json({
-            message: "Review not found",
-            type: "error"
-        });
+        const reviewToEdit = await review.findById(reviewId);
+        if (!reviewToEdit) {
+            return res.status(404).json({
+                message: "Review not found",
+                type: "error"
+            });
         }
+        if (reviewToEdit.author?.toString() !== req.user._id.toString()) {
+            return res.status(403).json({
+                message: "You can only edit your own reviews",
+                type: "error"
+            });
+        }
+        reviewToEdit.rating = rating;
+        reviewToEdit.comment = comment;
+        await reviewToEdit.save();
 
         res.status(200).json({
             message: 'Review updated successfully.',

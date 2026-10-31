@@ -55,10 +55,12 @@ export const userLogin = (req, res, next) => {
 
     req.logIn(user, (err) => {
       if (err) return next(err);
+      const safeUser = user.toObject();
+      delete safeUser.password;
       return res.status(200).json({
         message: "Logged in successfully",
         type: "success",
-        user,
+        user: safeUser,
       });
     });
   })(req, res, next);
@@ -80,6 +82,12 @@ export const updateProfile = async(req, res) => {
     if (!mongoose.Types.ObjectId.isValid(userID)) {
       return res.status(400).json({
         message: "Invalid user ID",
+        type: "error"
+      });
+    }
+    if (req.user._id.toString() !== userID) {
+      return res.status(403).json({
+        message: "You can only update your own profile",
         type: "error"
       });
     }
