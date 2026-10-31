@@ -17,6 +17,7 @@
     "@mui/material": "^7.3.4",
     "@mui/styled-engine-sc": "^7.3.3",
     "axios": "^1.12.2",
+    "cors": "^2.8.6",
     "qrcode.react": "^4.2.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
