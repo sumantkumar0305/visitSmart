@@ -12,7 +12,7 @@ import AboutHotel from "./AllCode/MainBodyCode/AboutCardCode/HotelCode/AboutHote
 import HotelBook from "./AllCode/MainBodyCode/AboutCardCode/HotelCode/AboutHotel/HotelBook/HotelBook";
 import HotelPayment from "./AllCode/MainBodyCode/AboutCardCode/HotelCode/AboutHotel/HotelBook/HotelPayment/HotelPayment";
 import {Routes, Route} from "react-router-dom";
-import PlanMyTrip from "./AllCode/HeaderCode/About/planMyTrip";
+import PlanMyTrip from "./AllCode/HeaderCode/About/PlanMyTrip.jsx";
 import ThankYou from "./AllCode/HeaderCode/About/Thankyou";
 
 function App() {
