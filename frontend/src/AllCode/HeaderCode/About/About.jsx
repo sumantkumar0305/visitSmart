@@ -93,19 +93,19 @@ const contactInfo = [
   {
     icon: <EmailIcon sx={{ color: brandColors.primary }} />,
     label: 'Email',
-    value: 'support@visitsmart-travel.com',
-    href: 'mailto:support@visitsmart-travel.com'
+    value: 'sumant.kumar0305@gmail.com',
+    href: 'mailto:sumant.kumar0305@gmail.com'
   },
   {
     icon: <PhoneIcon sx={{ color: brandColors.primary }} />,
     label: 'Phone',
-    value: '+91 98765 43210',
-    href: 'tel:+919876543210'
+    value: '+91 8578009172',
+    href: 'tel:+918578009172'
   },
   {
     icon: <LinkedInIcon sx={{ color: brandColors.primary }} />,
     label: 'LinkedIn',
-    value: 'linkedin.com/company/visits-mart',
+    value: 'linkedin.com/in/sumant-kumar-dev/',
     href: 'https://www.linkedin.com/in/sumant-kumar-dev/'
   },
   {

@@ -65,6 +65,7 @@ export default function HotelAddForm() {
 
     const response = await axios.post(`${BASE_URL}/hotel/data/save/${ID}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
     });  
 
     const { type, message } = response.data;
