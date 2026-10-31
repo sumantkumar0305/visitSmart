@@ -18,12 +18,6 @@ export const validateEnv = () => {
     if (!process.env.FRONTEND_ORIGINS?.trim()) {
       missingVariables.push("FRONTEND_ORIGINS");
     }
-
-    if ((process.env.SESSION_KEY?.length ?? 0) < 32) {
-      throw new Error(
-        "SESSION_KEY must be at least 32 characters."
-      );
-    }
   }
 
   if (missingVariables.length > 0) {
