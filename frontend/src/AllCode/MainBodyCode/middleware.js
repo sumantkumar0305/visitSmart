@@ -2,7 +2,7 @@
 import axios from "axios";
 
 export const BASE_URL = (
-  import.meta.env.VITE_API_URL || "http://localhost:8000"
+  import.meta.env.VITE_API_URL || "https://visitsmart.onrender.com/"
 ).replace(/\/+$/, "");
 
 export const fetchReviews = async (ID) => {
